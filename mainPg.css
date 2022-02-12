@@ -15,3 +15,8 @@ body {
     position: fixed;
     margin: 0 auto;
 }
+
+div > button {
+    z-index: 99;
+    position: absolute;
+}
