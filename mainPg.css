@@ -10,3 +10,7 @@ body {
     overflow-x: hidden;
     user-select: none;
 }
+
+#mainPg {
+    position: fixed;
+}
