@@ -1,0 +1,11 @@
+* {
+    font-family: 'Segoe UI',  sans-serif;
+}
+
+#resultTable {
+    margin: 0 auto;
+}
+
+.resultTitle {
+    font-weight: bold;
+}

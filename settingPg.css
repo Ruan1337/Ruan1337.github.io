@@ -1,0 +1,24 @@
+#settingPg {
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+#settingsTable {
+    border: none;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+}
+
+.setting {
+    text-align: left;
+}
+
+.adjText {
+    width: 6ch;
+    text-align: center;
+}
+
+.selectBox {
+    width: 18ch;
+}

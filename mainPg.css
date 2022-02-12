@@ -1,0 +1,12 @@
+* {
+    font-family: 'Segoe UI',  sans-serif;
+}
+
+body {
+    border: none;
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    overflow-x: hidden;
+    user-select: none;
+}
