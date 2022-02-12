@@ -1,1 +1,308 @@
-<p> 软妹酱 SoftSisterSauce's homepage! </p>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta content="width=device-width, initial-scale=1, maximum-scale=4, minimum-scale=0.25, user-scalable=no" name="viewport">
+        <meta name="format-detection" content="telephone=no">
+        <link href="mainPg.css" rel="stylesheet">
+        <link href="resultPg.css" rel="stylesheet">
+        <link href="settingPg.css" rel="stylesheet">
+
+        <title> 15Puzzle ver 4.0 by MeiRuan </title>
+        <link rel="icon" href="icon.png" />
+    </head>
+
+    <body onload="initTouch(); setLanguage(true, 0);">
+        <div id="pageRow" style="text-align: center;">
+            <input id="backBtn" style="visibility: hidden;" type="button" value="Puzzle" onclick="setPage(0); resetTimer(); controlCustomizeBtn(); initPuzzle(); redraw();">
+            <input id="resultBtn" type="button" value="Result" onclick="setPage(1); resetTimer(); controlCustomizeBtn(); initPuzzle();">
+            <input id="settingsBtn" type="button" value="Settings" onclick="setPage(2); resetTimer(); controlCustomizeBtn(); initPuzzle();">
+        </div>
+        <div class="pg" id="mainPg" style="display: block; color: #000;">
+            <div id="puzzlePg">
+                <div id="operRow" style="text-align: center;">
+                    <input id="customizeBtn" type="button" value="Customize" onclick="customizeScramble();">
+                    <input id="scrambleBtn" type="button" value="Scramble" onclick="initPuzzle(); beforeScramble(); scramble(); afterScramble();">
+                    <input id="solveBtn" type="button" value="Solve" onclick="initPuzzle(); resetTimer(); controlCustomizeBtn(); redraw();">
+                    <input id="confirmBtn" type="button" style="visibility: hidden;" value="Confirm solve" onclick="bldConfirm(); controlCustomizeBtn(); redraw();">
+                    <input id="prevBtn" type="button" style="visibility: hidden;" value="Previous puzzle" onclick="prevPuzzle();">
+                    <input id="nextBtn" type="button" style="visibility: hidden;" value="Next puzzle" onclick="copyPuzzle();"> <!-- scramble +1; if the last, change value and start solving -->
+                    <input id="exportBtn" type="button" value="Export state" onclick="exportState();">
+                </div>
+                <div style="display: block; text-align: center;">
+                    <p id="statusBar" > Time 0 Moves 0 TPS 0 </p>
+                </div>
+                <div class="puzzle">
+                    <canvas style="display: block; margin: auto auto;" id="puzzleCanvas" width="620" height="620"> Your browser does not support canvas! </canvas>
+                </div>
+            </div>
+        </div>
+        <div class="pg" id="resultPg" style="display: none;">
+                <div style="text-align: center;">
+                    <span id="resultSessionLabel"> Session </span> 
+                    <span> <select class="selectBox" id="resultSession" onchange="sessionChange(this.options[this.options.selectedIndex].value);">
+                        <option id="session1" value="1"> 1 </option>
+                        <option id="session2" value="2"> 2 </option>
+                        <option id="session3" value="3"> 3 </option>
+                        <option id="session4" value="4"> 4 </option>
+                        <option id="session5" value="5"> 5 </option>
+                        <option id="session6" value="6"> 6 </option>
+                        <option id="session7" value="7"> 7 </option>
+                        <option id="session8" value="8"> 8 </option>
+                        <option id="session9" value="9"> 9 </option>
+                        <option id="session10" value="10"> 10 </option>
+                        <option id="session11" value="11"> 11 </option>
+                        <option id="session12" value="12"> 12 </option>
+                        <option id="session13" value="13"> 13 </option>
+                        <option id="session14" value="14"> 14 </option>
+                        <option id="session15" value="15"> 15 </option>
+                    </select> </span>
+                    <span>
+                        <input id="clrSession" type="button" value="Clear session" onclick="clearSession();">
+                    </span>
+                </div>
+            <div style="display: block; text-align: center;">
+                <table id="resultTable">
+                    <tr id="resultFirstRow">
+                        <td class="resultTitle"> # </td>
+                        <td class="resultTitle" id="timeSingle"> Time </td>
+                        <td class="resultTitle" id="movesSingle"> Moves </td>
+                        <td class="resultTitle" id="tpsSingle"> TPS </td>
+                        <td class="resultTitle" id="timeAo5"> Time_ao5 </td>
+                        <td class="resultTitle" id="movesAo5"> Moves_ao5 </td>
+                        <td class="resultTitle" id="tpsAo5"> TPS_ao5 </td>
+                        <td class="resultTitle" id="timeAo12"> Time_ao12 </td>
+                        <td class="resultTitle" id="movesAo12"> Moves_ao12 </td>
+                        <td class="resultTitle" id="tpsAo12"> TPS_ao12 </td> 
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="pg" id="settingPg" style="display: none;">
+            <table id="settingsTable">
+                <tr> <td class="title">
+                    <span id="titleLabel1"> -----Puzzle----- </span>
+                </td> </tr>
+                <tr> <td class="setting">
+                   <span id="puzzleWidthLabel"> Puzzle width (2 ~ 20) </span>
+                    <span style="white-space: nowrap;">
+                        <input class="adjText" type="text" maxlength="2" id="adjWidth" onchange="puzzleSizeOnChange(0);">
+                        <input type="range" class="slider" id="adjWidthSlider" value="4" min="2" max="20" step="1" onchange="puzzleSizeOnChange(1);">
+                    </span> 
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="puzzleHeightLabel"> Puzzle height (2 ~ 20) </span>
+                    <span style="white-space: nowrap;">
+                        <input class="adjText" type="text" maxlength="2" id="adjHeight" onchange="puzzleSizeOnChange(0);">
+                        <input type="range" class="slider" id="adjHeightSlider" value="4" min="2" max="20" step="1" onchange="puzzleSizeOnChange(1);">
+                    </span> 
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="solveTypeLabel"> Solve type </span>
+                    <select class="selectBox" id="solveType" onchange="solveTypeChange(this.options[this.options.selectedIndex].value);">
+                        <option id="std" value="std"> Standard </option>
+                        <option id="tt" value="tt"> 2-N Relay </option>
+                        <option id="tf" value="tf"> Width Relay </option>
+                        <option id="ft" value="ft"> Height Relay </option>
+                        <option id="ff" value="ff"> Width & Height Relay </option>
+                        <option id="mara" value="mara"> Marathon </option>
+                        <option id="bld" value="bld"> Blindfolded </option>
+                        <option id="multibld" value="multibld"> Multi Blindfolded </option>
+                    </select>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="marathonSolvesLabel"> Marathon solves (> 1) </span>
+                    <span style="white-space: nowrap;">
+                        <input class="adjText" type="text" maxlength="3" id="adjMara" onchange="maraOnChange(0);">
+                        <input type="range" class="slider" id="adjMaraSlider" value="42" min="2" max="100" step="1" onchange="maraOnChange(1);">
+                    </span> 
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="multibldSolvesLabel"> Multi Blind solves (> 1) </span>
+                    <span style="white-space: nowrap;">
+                        <input class="adjText" type="text" maxlength="3" id="adjMultibld" onchange="multibldOnChange(0);">
+                        <input type="range" class="slider" id="adjMultibldSlider" value="2" min="2" max="100" step="1" onchange="multibldOnChange(1);">
+                    </span> 
+                </td> </tr>
+                <tr> <td> </td> </tr>
+
+                <tr> <td class="title">
+                    <span id="titleLabel2"> -----Appearance----- </span>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="textColorLabel"> Text color </span>
+                    <input type="color" class="adjColor" id="puzzleTextColor" onchange="changePuzzleTextColor(this.value);">
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="textSizeLabel"> Text size ratio (0 ~ 1) </span>
+                    <span style="white-space: nowrap;">
+                        <input class="adjText" type="text" id="adjPuzzleTextRatio" onchange="textRatioOnChange(0);">
+                        <input type="range" class="slider" id="adjPuzzleTextRatioSlider" value="0.66" min="0.01" max="1" step="0.01" onchange="textRatioOnChange(1);">
+                    </span> 
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="puzzleSizeLabel"> Puzzle size (> 0) </span>
+                    <span style="white-space: nowrap;">
+                        <input class="adjText" type="text" id="adjPuzzleSize" onchange="pxSizeOnChange(0);">
+                        <input type="range" class="slider" id="adjPuzzleSizeSlider" value="620" min="100" max="2000" step="1" onchange="pxSizeOnChange(1);">
+                    </span> 
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="marginLabel"> Margin (>= 0) </span>
+                    <span style="white-space: nowrap;">
+                        <input class="adjText" type="text" id="adjMargin" onchange="marginOnChange(0);">
+                        <input type="range" class="slider" id="adjMarginSlider" value="2" min="0" max="50" step="1" onchange="marginOnChange(1);">
+                    </span> 
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="filletLabel"> Fillet radius ratio (0 ~ 0.5) </span>
+                    <span style="white-space: nowrap;">
+                        <input class="adjText" type="text" id="adjRadius" onchange="radiusFactorOnChange(0);">
+                        <input type="range" class="slider" id="adjRadiusSlider" value="0" min="0" max="0.5" step="0.01" onchange="radiusFactorOnChange(1);">
+                    </span>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span>
+                        <input type="checkbox" id="adjBorder" onchange="changePieceBorder()">
+                    </span> 
+                    <span id="borderLabel"> Border of pieces </span>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="baseLabel"> Base (2 ~ 37) </span>
+                    <span style="white-space: nowrap;">
+                        <input class="adjText" type="text" maxlength="2" id="adjBase" onchange="baseOnChange(0);">
+                        <input type="range" class="slider" id="adjBaseSlider" value="10" min="2" max="37" step="1" onchange="baseOnChange(1);">
+                    </span> 
+                </td> </tr>
+
+                <tr> <td class="title">
+                    <span id="titleLabel3"> -----Statistics----- </span>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="averageNumberLabel1"> Rolling average length 1 (3 ~ 1000) </span>
+                    <input class="adjText" type="text" maxlength="4" id="adjAverageNumber1" onchange="averageLengthChange(0);">
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="averageNumberLabel2"> Rolling average length 2 (3 ~ 1000) </span>
+                    <input class="adjText" type="text" maxlength="4" id="adjAverageNumber2" onchange="averageLengthChange(1);">
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="averageTypeLabel1"> Rolling average type 1 </span>
+                    <select class="selectBox" id="adjAverageType1" onchange="averageTypeChange(0, this.options[this.options.selectedIndex].value);">
+                        <option id="averageBox1" value="1"> Average </option>
+                        <option id="meanBox1" value="0"> Mean </option>
+                    </select>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="averageTypeLabel2"> Rolling average type 2 </span>
+                    <select class="selectBox" id="adjAverageType2" onchange="averageTypeChange(1, this.options[this.options.selectedIndex].value);">
+                        <option id="averageBox2" value="1"> Average </option>
+                        <option id="meanBox2" value="0"> Mean </option>
+                    </select>
+                </td> </tr>
+
+                <tr> <td class="title">
+                    <span id="titleLabel4"> -----Color scheme----- </span>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="colorSchemeLabel"> Color scheme </span>
+                    <select class="selectBox" id="puzzleScheme" onchange="puzzleSchemeChange(this.options[this.options.selectedIndex].value);">
+                        <option id="scheme1" value="Fringes"> Fringes </option>
+                        <option id="scheme2" value="Rows, Cols"> Rows, Columns </option>
+                        <option id="scheme3" value="Rows"> Rows </option>
+                        <option id="scheme4" value="Cols"> Columns </option>
+                        <option id="scheme5" value="Mono"> Mono </option>
+                        <option id="scheme6" value="L2R"> Last 2 Rows </option>
+                        <option id="scheme7" value="L2C"> Last 2 Columns </option>
+                        <option id="scheme8" value="Live Fringes"> Live Fringes </option>
+                        <option id="scheme9" value="Live Rows, Cols"> Live Rows, Columns </option>
+                        <option id="scheme10" value="Live Rows"> Live Rows </option>
+                        <option id="scheme11" value="Live Cols"> Live Columns </option>
+                        <option id="scheme12" value="Live L2R"> Live Last 2 Rows </option>
+                        <option id="scheme13" value="Live L2C"> Live Last 2 Columns </option>
+                    </select>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="rainbowLightnessLabel"> Rainbow lightness (0 ~ 100) </span>
+                    <span style="white-space: nowrap;">
+                        <input class="adjText" type="text" id="rainbowLightness" onchange="lightnessOnChange(0);">
+                        <input type="range" class="slider" id="rainbowLightnessSlider" value="75" min="0" max="100" step="1" onchange="lightnessOnChange(1);">
+                    </span> 
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="liveDoneLabel"> Live pieces: done </span>
+                    <input type="color" class="adjColor" id="liveDoneColor" onchange="changeLive(0, this.value);">
+                    <span id="liveCurrentLabel"> current </span>
+                    <input type="color" class="adjColor" id="liveCurrentColor" onchange="changeLive(1, this.value);">
+                    <span id="liveNextLabel"> next </span>
+                    <input type="color" class="adjColor" id="liveNextColor" onchange="changeLive(2, this.value);">
+                    <span id="liveOtherLabel"> other </span>
+                    <input type="color" class="adjColor" id="liveFurtherColor" onchange="changeLive(3, this.value);">
+                </td> </tr>
+
+                <tr> <td class="title">
+                    <span id="titleLabel5"> -----Controls----- </span>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span>
+                        <input type="checkbox" id="invertControl" name="invertControl" onclick="invertControlFunction();">
+                    </span>
+                    <span id="invertKeyboardLabel"> Invert keyboard controls </span>
+                </td> </tr>
+
+                <tr> <td class="setting">
+                    <span>
+                        <input type="checkbox" id="hoverControl" name="hoverControl" onclick="hoverControlFunction();">
+                    </span>
+                    <span id="switchHoverLabel"> Hover on </span>
+                </td> </tr>
+
+                <tr> <td class="title">
+                    <span id="titleLabel6"> -----Timer----- </span>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="accuracyLabel"> Time/TPS accuracy </span>
+                    <select class="selectBox" id="accuracy" onchange="accuracyChange(this.options[this.options.selectedIndex].value);">
+                        <option value="100"> 0.01 </option>
+                        <option value="1000"> 0.001 </option>
+                    </select>
+                </td> </tr>
+
+                <tr> <td class="setting">
+                    <span id="minutesLabel"> Time format </span>
+                    <select class="selectBox" id="minutes" onchange="setMinutes(this.options[this.options.selectedIndex].value);">
+                        <option value="2"> hh:mm:ss.xx(x) </option>
+                        <option value="1"> mm:ss.xx(x) </option>
+                        <option value="0"> ss.xx(x) </option>
+                    </select>
+                </td> </tr>
+
+                <tr> <td class="setting">
+                    <span id="updateFreqLabel"> Timer update </span>
+                    <select class="selectBox" id="freq" onchange="updateFreqChange(this.options[this.options.selectedIndex].value);">
+                        <option id="timer1" value="60"> real time </option>
+                        <option id="timer2" value="10"> to 0.1s </option>
+                        <option id="timer3" value="1"> to seconds </option>
+                        <option id="timer4" value="0"> do not display </option>
+                    </select>
+                </td> </tr>
+
+                <tr> <td class="title">
+                    <span id="titleLabel7"> -----Language----- </span>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span id="languageLabel"> Language </span>
+                    <select class="selectBox" id="language" onchange="setLanguage(false, this.options[this.options.selectedIndex].value);">
+                        <option value="0"> English </option>
+                        <option value="1"> 中文 </option>
+                    </select>
+                </td> </tr>
+            </table>
+        </div>
+
+        <script type="text/javascript" src="language.js"></script>
+        <script type="text/javascript" src="mainPg.js"></script>
+        <script type="text/javascript" src="resultPg.js"></script>
+        <script type="text/javascript" src="settingPg.js"></script>
+    </body>
+</html>
