@@ -13,4 +13,5 @@ body {
 
 #mainPg {
     position: fixed;
+    margin: 0 auto;
 }
