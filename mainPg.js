@@ -45,6 +45,7 @@ function initTouch() {
         if (multibldProgress >= multibldLength || multibldInProgress == false) {
             clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
         }
+        document.body.style.overflowY = "hidden";
     },false)
     document.addEventListener("touchmove",function(e){
         let bbox = puzzleCanvas.getBoundingClientRect();
@@ -53,6 +54,10 @@ function initTouch() {
         if ((multibldProgress >= multibldLength || multibldInProgress == false) && hoverOn) {
             clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
         }
+    },false)
+    document.addEventListener("touchend",function(e){
+        e.preventDefault();
+        document.body.style.overflowY = "auto";
     },false)
 }
 
@@ -817,7 +822,7 @@ function redrawPuzzle() {
         }
     }
     // add a section of coordinates? i.e. start from 0
-    ctx.font = puzzleTextSize + "px Arial";
+    ctx.font = puzzleTextSize + "px sans-serif";
     ctx.fillStyle = puzzleTextColor;
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
