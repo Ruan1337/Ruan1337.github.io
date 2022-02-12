@@ -817,7 +817,7 @@ function redrawPuzzle() {
         }
     }
     // add a section of coordinates? i.e. start from 0
-    ctx.font = puzzleTextSize + "px Segoe UI";
+    ctx.font = puzzleTextSize + "px Arial";
     ctx.fillStyle = puzzleTextColor;
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
