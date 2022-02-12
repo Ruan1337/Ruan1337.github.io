@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <meta content="width=device-width, initial-scale=1, maximum-scale=4, minimum-scale=0.25, user-scalable=no" name="viewport">
+        <meta content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no" name="viewport">
         <meta name="format-detection" content="telephone=no">
         <link href="mainPg.css" rel="stylesheet">
         <link href="resultPg.css" rel="stylesheet">
@@ -33,7 +33,7 @@
                     <p id="statusBar" > Time 0 Moves 0 TPS 0 </p>
                 </div>
                 <div class="puzzle">
-                    <canvas style="display: block; margin: auto auto;" id="puzzleCanvas" width="620" height="620"> Your browser does not support canvas! </canvas>
+                    <canvas style="display: block; margin: auto auto;" id="puzzleCanvas" width="620" height="620" disable-scroll="true" bindtouchstart="touchStart" bindtouchmove="touchMove" bindtouchend="touchEnd"> Your browser does not support canvas! </canvas>
                 </div>
             </div>
         </div>
@@ -62,7 +62,7 @@
                     </span>
                 </div>
             <div style="display: block; text-align: center;">
-                <table id="resultTable">
+                <table id="resultTable" style="overflow-y: scroll; overflow-x: none;">
                     <tr id="resultFirstRow">
                         <td class="resultTitle"> # </td>
                         <td class="resultTitle" id="timeSingle"> Time </td>
