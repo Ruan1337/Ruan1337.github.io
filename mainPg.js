@@ -39,15 +39,16 @@ function initWindow() {
 }
 
 function initTouch() {
-    document.addEventListener("touchstart",function(e){
+    puzzleCanvas.addEventListener("touchstart",function(e){
         let bbox = puzzleCanvas.getBoundingClientRect();
+        e.preventDefault();
+        e.stopPropagation();
         var touch=e.touches[0];
         if (multibldProgress >= multibldLength || multibldInProgress == false) {
             clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
         }
-        document.body.style.overflowY = "hidden";
     },false)
-    document.addEventListener("touchmove",function(e){
+    puzzleCanvas.addEventListener("touchmove",function(e){
         let bbox = puzzleCanvas.getBoundingClientRect();
         e.preventDefault();
         e.stopPropagation();
@@ -56,10 +57,9 @@ function initTouch() {
             clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
         }
     },false)
-    document.addEventListener("touchend",function(e){
+    /*puzzleCanvas.addEventListener("touchend",function(e){
         e.preventDefault();
-        //document.body.style.overflowY = "auto";
-    },false)
+    },false)*/
 }
 
 function genBase(base) {
