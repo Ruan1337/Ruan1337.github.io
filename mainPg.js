@@ -39,11 +39,11 @@ function initWindow() {
 }
 
 function initTouch() {
-    puzzleCanvas.addEventListener("touchstart",function(e){
+    /*puzzleCanvas.addEventListener("touchstart",function(e){
         let bbox = puzzleCanvas.getBoundingClientRect();
         e.preventDefault();
         e.stopPropagation();
-        var touch=e.touches[0];
+        let touch=e.touches[0];
         if (multibldProgress >= multibldLength || multibldInProgress == false) {
             clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
         }
@@ -52,14 +52,28 @@ function initTouch() {
         let bbox = puzzleCanvas.getBoundingClientRect();
         e.preventDefault();
         e.stopPropagation();
-        var touch=e.touches[0];
+        let touch=e.touches[0];
         if ((multibldProgress >= multibldLength || multibldInProgress == false) && hoverOn) {
             clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
         }
     },false)
-    /*puzzleCanvas.addEventListener("touchend",function(e){
+    puzzleCanvas.addEventListener("touchend",function(e){
         e.preventDefault();
     },false)*/
+    puzzleCanvas.addEventListener('touchstart', mouse, false);
+    puzzleCanvas.addEventListener('touchend', mouse, false);
+    puzzleCanvas.addEventListener('touchmove', mouse, false);
+}
+
+function mouse(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    if(e.type == "touchstart" || (e.type == "touchmove" && hoverOn) || e.type == "touchend" || e.type == "touchleave") {
+        let bbox = puzzleCanvas.getBoundingClientRect();
+        let touch=e.touches[0];
+        clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
+    }
+    return false;
 }
 
 function genBase(base) {
