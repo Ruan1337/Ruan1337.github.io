@@ -50,6 +50,7 @@ function initTouch() {
     document.addEventListener("touchmove",function(e){
         let bbox = puzzleCanvas.getBoundingClientRect();
         e.preventDefault();
+        e.stopPropagation();
         var touch=e.touches[0];
         if ((multibldProgress >= multibldLength || multibldInProgress == false) && hoverOn) {
             clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
@@ -57,7 +58,7 @@ function initTouch() {
     },false)
     document.addEventListener("touchend",function(e){
         e.preventDefault();
-        document.body.style.overflowY = "auto";
+        //document.body.style.overflowY = "auto";
     },false)
 }
 
