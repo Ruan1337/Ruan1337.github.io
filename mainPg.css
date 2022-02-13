@@ -10,12 +10,3 @@ body {
     overflow-x: hidden;
     user-select: none;
 }
-
-#mainPg {
-    margin: 0 auto;
-}
-
-div > button {
-    z-index: 99;
-    position: absolute;
-}
