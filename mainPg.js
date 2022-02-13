@@ -39,27 +39,6 @@ function initWindow() {
 }
 
 function initTouch() {
-    /*puzzleCanvas.addEventListener("touchstart",function(e){
-        let bbox = puzzleCanvas.getBoundingClientRect();
-        e.preventDefault();
-        e.stopPropagation();
-        let touch=e.touches[0];
-        if (multibldProgress >= multibldLength || multibldInProgress == false) {
-            clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
-        }
-    },false)
-    puzzleCanvas.addEventListener("touchmove",function(e){
-        let bbox = puzzleCanvas.getBoundingClientRect();
-        e.preventDefault();
-        e.stopPropagation();
-        let touch=e.touches[0];
-        if ((multibldProgress >= multibldLength || multibldInProgress == false) && hoverOn) {
-            clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
-        }
-    },false)
-    puzzleCanvas.addEventListener("touchend",function(e){
-        e.preventDefault();
-    },false)*/
     puzzleCanvas.addEventListener('touchstart', mouse, false);
     puzzleCanvas.addEventListener('touchend', mouse, false);
     puzzleCanvas.addEventListener('touchmove', mouse, false);

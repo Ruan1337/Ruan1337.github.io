@@ -5,7 +5,7 @@ All changes to this project will be listed here.
 
 4.0 - before 2022-02-12
 ----------
-#Added 添加
+Added 添加
 - result page, and related statistics settings
 - language
 - timer settings
@@ -13,21 +13,23 @@ All changes to this project will be listed here.
 - 语言
 - 计时器设置
 
-#Changed 变更
+Changed 变更
 - uses sliders for settings instead of buttons
 - 对设置, 用滑条取代按钮
 
-#Removed 移除
+Removed 移除
 - Rainbow Start, End, Direction, Saturation settings
 - 彩虹色开始, 结束, 方向, 饱和度设置
 
-4.1 - 2022-02-13
+4.1.1 - 2022-02-13
 ----------
-#Added 添加
+Added 添加
 - README.md
 - CHANGELOG.md
 - TODO.md
 
-#Changed
+Changed
 - functionality of touchmove and buttons
+- fixed format of description files
 - 触屏滑动和按钮的功能性
+- 修正说明文件的格式

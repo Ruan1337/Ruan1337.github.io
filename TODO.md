@@ -5,7 +5,7 @@ To-do functions and issues are listed here.
 4.0 - before 2022-02-12
 ----------
 - add description files to this project [done]  
-- 为项目添加说明文件 [done]  
+- 为项目添加说明文件 [完成]  
 
 4.1 - 2022-02-13
 ----------
