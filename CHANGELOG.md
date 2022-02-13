@@ -33,3 +33,27 @@ Changed
 - fixed format of description files
 - 触屏滑动和按钮的功能性
 - 修正说明文件的格式
+
+4.1.2 - 2022-02-13
+----------
+Added
+- change session name
+- delete single solve
+- click on a single solve to get detailed information
+- click on an average list to get information
+- overall statistics of current session
+- 改变分组名称
+- 删除单次打乱
+- 点击单次成绩获取详细信息
+- 点击平均列表获取信息
+- 当前分组的整体统计
+
+Changed
+- fixed wrong average calculation results
+- fixed problem of counting results when resetting during solve
+- fixed base10 onload when base is not 10
+- fixed maximum base error: 37->36
+- 修正错误平均计算结果
+- 修正还原时重置会计入成绩的错误
+- 修正不是10进制时以10进制启动
+- 修正最大进制错误: 37->36

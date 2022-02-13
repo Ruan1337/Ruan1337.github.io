@@ -38,31 +38,35 @@
             </div>
         </div>
         <div class="pg" id="resultPg" style="display: none;">
-                <div style="text-align: center;">
-                    <span id="resultSessionLabel"> Session </span> 
-                    <span> <select class="selectBox" id="resultSession" onchange="sessionChange(this.options[this.options.selectedIndex].value);">
-                        <option id="session1" value="1"> 1 </option>
-                        <option id="session2" value="2"> 2 </option>
-                        <option id="session3" value="3"> 3 </option>
-                        <option id="session4" value="4"> 4 </option>
-                        <option id="session5" value="5"> 5 </option>
-                        <option id="session6" value="6"> 6 </option>
-                        <option id="session7" value="7"> 7 </option>
-                        <option id="session8" value="8"> 8 </option>
-                        <option id="session9" value="9"> 9 </option>
-                        <option id="session10" value="10"> 10 </option>
-                        <option id="session11" value="11"> 11 </option>
-                        <option id="session12" value="12"> 12 </option>
-                        <option id="session13" value="13"> 13 </option>
-                        <option id="session14" value="14"> 14 </option>
-                        <option id="session15" value="15"> 15 </option>
-                    </select> </span>
-                    <span>
-                        <input id="clrSession" type="button" value="Clear session" onclick="clearSession();">
-                    </span>
-                </div>
+            <div style="text-align: center;">
+                <span id="resultSessionLabel"> Session </span> 
+                <span> <select class="selectBox" id="resultSession" onchange="sessionChange(this.options[this.options.selectedIndex].value);">
+                    <option id="session1" value="1"> 1 </option>
+                    <option id="session2" value="2"> 2 </option>
+                    <option id="session3" value="3"> 3 </option>
+                    <option id="session4" value="4"> 4 </option>
+                    <option id="session5" value="5"> 5 </option>
+                    <option id="session6" value="6"> 6 </option>
+                    <option id="session7" value="7"> 7 </option>
+                    <option id="session8" value="8"> 8 </option>
+                    <option id="session9" value="9"> 9 </option>
+                    <option id="session10" value="10"> 10 </option>
+                    <option id="session11" value="11"> 11 </option>
+                    <option id="session12" value="12"> 12 </option>
+                    <option id="session13" value="13"> 13 </option>
+                    <option id="session14" value="14"> 14 </option>
+                    <option id="session15" value="15"> 15 </option>
+                </select> </span>
+                <span>
+                    <input id="renameSession" type="button" value="Rename" onclick="setSessionName();">
+                </span>
+                <span>
+                    <input id="clrSession" type="button" value="Clear session" onclick="clearSession();">
+                </span>
+            </div>
+            <p id="sessionStats" style="text-align: center;">Session mean: Time 0 Moves 0 TPS 0</p>
             <div style="display: block; text-align: center;">
-                <table id="resultTable">
+                <table id="resultTable" onclick="getDetails();">
                     <tr id="resultFirstRow">
                         <td class="resultTitle"> # </td>
                         <td class="resultTitle" id="timeSingle"> Time </td>
@@ -168,10 +172,10 @@
                     <span id="borderLabel"> Border of pieces </span>
                 </td> </tr>
                 <tr> <td class="setting">
-                    <span id="baseLabel"> Base (2 ~ 37) </span>
+                    <span id="baseLabel"> Base (2 ~ 36) </span>
                     <span style="white-space: nowrap;">
                         <input class="adjText" type="text" maxlength="2" id="adjBase" onchange="baseOnChange(0);">
-                        <input type="range" class="slider" id="adjBaseSlider" value="10" min="2" max="37" step="1" onchange="baseOnChange(1);">
+                        <input type="range" class="slider" id="adjBaseSlider" value="10" min="2" max="36" step="1" onchange="baseOnChange(1);">
                     </span> 
                 </td> </tr>
 
@@ -307,5 +311,6 @@
         <script type="text/javascript" src="mainPg.js"></script>
         <script type="text/javascript" src="resultPg.js"></script>
         <script type="text/javascript" src="settingPg.js"></script>
+        <script type="text/javascript" src="startup.js"></script>
     </body>
 </html>

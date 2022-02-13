@@ -1,7 +1,7 @@
 let language = 0; // 0 english, 1 chinese 2?
 let buttonLanguageList = [
-    ["Customize", "Scramble", "Solve", "Confirm solve", "Next puzzle", "Settings", "Puzzle", "Export state", "Previous puzzle", "Result", "Clear session"],
-    ["自定义", "打乱", "自动复原", "确认复原", "下一个", "设置", "方块", "导出状态", "上一个", "成绩", "清空分组"]
+    ["Customize", "Scramble", "Solve", "Confirm solve", "Next puzzle", "Settings", "Puzzle", "Export state", "Previous puzzle", "Result", "Clear session", "Rename"],
+    ["自定义", "打乱", "自动复原", "确认复原", "下一个", "设置", "方块", "导出状态", "上一个", "成绩", "清空分组", "重命名"]
 ];
 let settingsTitleList = [
     ["Puzzle", "Appearance", "Statistics", "Color scheme", "Controls", "Timer", "General", "Session"],
@@ -9,13 +9,13 @@ let settingsTitleList = [
 ];
 let settingsLanguageList = [
     ["Puzzle width (2 ~ 20)", "Puzzle height (2 ~ 20)", "Solve type", "Marathon solves (> 1)", "Multiblind solves (> 1)", "Text color",
-    "Text size ratio (0 ~ 1)", "Puzzle size (> 0)", "Margin (>= 0)", "Fillet radius ratio (0 ~ 0.5)", "Border of pieces", "Base (2 ~ 37)",
+    "Text size ratio (0 ~ 1)", "Puzzle size (> 0)", "Margin (>= 0)", "Fillet radius ratio (0 ~ 0.5)", "Border of pieces", "Base (2 ~ 36)",
     "Color scheme", "Rainbow lightness",
     "Live pieces: done", "current", "next", "other", "Invert keyboard controls", "Hover on", "Language",
     "Time/TPS accuracy", "Time format", "Timer update", "Rolling average length 1 (3 ~ 1000)",
     "Rolling average length 1 (3 ~ 1000)", "Rolling average type 1", "Rolling average type 2"],
     ["横向阶数 (2 ~ 20)", "纵向阶数 (2 ~ 20)", "模式", "连拧个数 (> 1)", "多盲个数 (> 1)", "文字颜色",
-    "文字大小比例 (0 ~ 1)", "拼图大小 (> 0)", "间隙 (>= 0)", "圆角大小比例 (0 ~ 0.5)", "块的边界", "进制数 (2 ~ 37)",
+    "文字大小比例 (0 ~ 1)", "拼图大小 (> 0)", "间隙 (>= 0)", "圆角大小比例 (0 ~ 0.5)", "块的边界", "进制数 (2 ~ 36)",
     "配色方案", "彩虹色亮度",
     "动态配色: 已完成", "当前", "下一组", "其它块", "反转键盘控制方向", "滑动", "语言",
     "时间/TPS 准确度", "时间格式", "计时器刷新", "滚动平均长度1 (3 ~ 1000)",
@@ -32,8 +32,16 @@ let solveTypeList = [
     ["标准", "N-2阶递减连拧", "横向阶数递减", "纵向阶数递减", "横向纵向阶数递减", "连拧", "盲拧", "多盲"]
 ];
 let infoBarList = [
-    ["Progress ", "Solved ", " Time ", " Moves ", " TPS ", "Current state has been copied to clipboard", "Export is not allowed in the process of blindfolding"],
-    ["进度 ", "复原 ", " 时间 ", " 步数 ", " TPS ", "当前状态已复制到剪切板", "盲拧过程不允许导出状态"]
+    ["Progress ", "Solved ", " Time ", " Moves ", " TPS ", 
+    "Current state has been copied to clipboard", "Export is not allowed in the process of blindfolding", 
+    "Session mean(", "Enter a session name:"],
+    ["进度 ", "复原 ", " 时间 ", " 步数 ", " TPS ", 
+    "当前状态已复制到剪切板", "盲拧过程不允许导出状态", 
+    "分组平均(", "输入分组名称:"]
+];
+let resultInteractionList = [
+    ["Delete this solve?"], 
+    ["确认删除该次成绩?"]
 ];
 let averageBoxList = [
     ["Average", "Mean", "Time", "Moves"], 
@@ -85,6 +93,7 @@ function setLanguage(systemDefault, languageValue) {
     document.querySelector('#prevBtn').value = buttonLanguageList[language][8];
     document.querySelector('#resultBtn').value = buttonLanguageList[language][9];
     document.querySelector('#clrSession').value = buttonLanguageList[language][10];
+    document.querySelector('#renameSession').value = buttonLanguageList[language][11];
 
     document.querySelector("#statusBar").textContent = infoBarList[language][2] + "0" + infoBarList[language][3] + "0" + infoBarList[language][4] + "0";
 
@@ -169,5 +178,12 @@ function setLanguage(systemDefault, languageValue) {
     document.querySelector('#averageTypeLabel2').innerHTML = settingsLanguageList[language][27];
     setDefaultSelected("language", language);
 
+    let tempSessionId;
+    for (let i = 1; i < 16; i ++) {
+        if (sessionName[i]) {
+            tempSessionId = "#session" + i;
+            document.querySelector(tempSessionId).innerHTML = sessionName[i];
+        }
+    }
     reloadResult();
 }

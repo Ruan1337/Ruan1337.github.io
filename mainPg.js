@@ -20,7 +20,7 @@ let solvesDone = 0, marathonLength = 42, multibldLength = 2, multibldFailed = 0;
 let multibldInProgress = false, multibldFinishMemo = false, multibldProgress = -1; // < multibldLength = inspection, >= multibldLength = solving
 let relayStartCols = cols, relayStartRows = rows;
 let unsolved = false, solveInProgress = false;
-let startTime = memoFinishTime = currentTime = endTime = 0;
+let startTime = memoFinishTime = currentTime = endTime = 0, timeString = "";
 let useMinutes = 1, useHours = 0, timerAccuracy = 1000, updateFreq = 60, intervalID;
 let puzzleTextColor = "#FFFFFF", puzzleTextRatio = 0.66, puzzleSize = 620, puzzleMargin = 2, puzzleRadiusFactor = 0, puzzleBorder = false;
 let onMainPage = true;
@@ -35,7 +35,6 @@ function initWindow() {
     document.querySelector("#adjPuzzleSize").value = puzzleSize;
     document.querySelector("#adjPuzzleSizeSlider").value = puzzleSize;
     localStorage.setItem("puzzleSize", puzzleSize);
-    redraw();
 }
 
 function initTouch() {
@@ -278,7 +277,7 @@ function initPuzzle() {
     multibldFailed = 0;
     if (solveInProgress) {
         moves = 0;
-        stopTimer();
+        stopTimer(false);
         relayInProgress = false;
         marathonInProgress = false;
         solveInProgress = false;
@@ -1123,7 +1122,7 @@ function stopRelay() {
                 rows = relayStartRows;
                 cols = relayStartCols;
                 if (solveInProgress) {
-                    stopTimer();
+                    stopTimer(true);
                 }
                 solveInProgress = false;
                 defineType();
@@ -1136,7 +1135,7 @@ function stopRelay() {
                 relayInProgress = false;
                 cols = relayStartCols;
                 if (solveInProgress) {
-                    stopTimer();
+                    stopTimer(true);
                 }
                 solveInProgress = false;
                 defineType();
@@ -1164,7 +1163,7 @@ function stopRelay() {
                 } else if (rows == 2) {
                     relayInProgress = false;
                     if (solveInProgress) {
-                        stopTimer();
+                        stopTimer(true);
                     }
                     solveInProgress = false;
                     rows = relayStartRows;
@@ -1200,7 +1199,7 @@ function stopMarathon() {
         if (solvesDone == marathonLength) {
             marathonInProgress = false;
             if (solveInProgress) {
-                stopTimer();
+                stopTimer(true);
             }
             solveInProgress = false;
         }
@@ -1214,7 +1213,7 @@ function stopMarathon() {
 
 function stopRegular() {
     if (solveInProgress) {
-        stopTimer();
+        stopTimer(true);
     }
     solveInProgress = false;
 }
@@ -1241,7 +1240,7 @@ function bldConfirm() {
     }
     unsolved ? bldIsConfirmed = -1 : bldIsConfirmed = 1;
     solveInProgress = false;
-    stopTimer();
+    stopTimer(true);
 }
 
 function startTimer() {
@@ -1268,12 +1267,15 @@ function memoTimer() {
     redraw();
 }
 
-function stopTimer() {
+function stopTimer(x) {
     clearInterval(intervalID);
     let d = new Date();
+    timeString = d.toLocaleDateString()  + " " + d.toLocaleTimeString();
     endTime = d.getTime();
     updateStatus();
-    addResult();
+    if (x) {
+        addResult();
+    }
 }
 
 function resetTimer() {
@@ -1389,10 +1391,3 @@ function setPage(x){
 
     onMainPage = (x == 0);
 }
-
-startUpInitPuzzle();
-genBase(puzzleBase);
-defineType();
-genColor();
-resetTimer();
-initPuzzle();

@@ -26,6 +26,7 @@ function readLocalStorage() {
     if (localStorage.getItem("updateFreq")) updateFreq = Number(localStorage.getItem("updateFreq"));
     if (localStorage.getItem("language")) language = Number(localStorage.getItem("language"));
 
+    if (localStorage.getItem("sessionName")) sessionName = JSON.parse(localStorage.getItem("sessionName"));
     if (localStorage.getItem("resultSession")) resultSession = Number(localStorage.getItem("resultSession"));
     if (localStorage.getItem("resultSolves")) resultSolves = JSON.parse(localStorage.getItem("resultSolves"));
     if (localStorage.getItem("resultArray")) resultArray = JSON.parse(localStorage.getItem("resultArray"));
@@ -277,7 +278,7 @@ function changePieceBorder() {
 function baseOnChange(slider) {
     let inputSize;
     (slider == 0) ? inputSize = document.querySelector("#adjBase").value : inputSize = document.querySelector("#adjBaseSlider").value;
-    if (isNaN(inputSize) || Number(inputSize) < 2 || Number(inputSize) > 37 || Number(inputSize) % 1 || Number(inputSize) == puzzleBase) {
+    if (isNaN(inputSize) || Number(inputSize) < 2 || Number(inputSize) > 36 || Number(inputSize) % 1 || Number(inputSize) == puzzleBase) {
         inputSize.value = puzzleBase;
         return false;
     }
@@ -348,13 +349,3 @@ function setDefaultSelected(selectId, checkValue) {
         }  
     }
 }
-
-if (localStorage.getItem("secondRun")) {
-    readLocalStorage();
-} else {
-    initWindow();
-    localStorage.setItem("secondRun", "true");
-}
-startUpSetting();
-initPuzzle();
-redraw();
