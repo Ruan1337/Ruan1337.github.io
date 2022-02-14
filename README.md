@@ -71,6 +71,24 @@ Solve types 复原模式
 - 盲拧 - 复原一次, 计观察时间. 观察一旦结束 (即动了第一步), 方块不可见, 直到确认复原.
 - 多盲 - 复原多次, 计观察时间. 同时记下所有方块状态, 随后连续复原. 在观察或复原阶段, 可以向前或向后切换.
 
+Result page 成绩页面
+----------
+This page includes functions below:
+- switch between 15 sessions
+- change the session name
+- clear the session
+- click on the # order to delete single solve
+- click on single/average results to get detailed info
+- click on session mean to get overall stats
+
+这个页面有如下功能:
+- 在15个分组之间切换
+- 重命名分组
+- 清空分组
+- 点击#序号删除单次成绩
+- 点击单次/平均成绩获取详细信息
+- 点击分组平均获取整体统计
+
 Color schemes 配色方案
 ----------
 - Fringes - separate a puzzle with groups of one column conbined with one row. Recommeded for most players.

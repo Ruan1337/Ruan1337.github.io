@@ -54,6 +54,30 @@ function mouse(e) {
     return false;
 }
 
+window.onresize = function() {
+    if (window.innerWidth < window.innerHeight) {
+        if (landscape >= 1) {
+            landscape = 0;
+            document.querySelector("#timeAo5").innerHTML = (averageBoxList[language][2] + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
+            document.querySelector("#movesAo5").innerHTML = (averageBoxList[language][3] + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
+            document.querySelector("#tpsAo5").innerHTML = ("TPS" + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
+            document.querySelector("#timeAo12").innerHTML = (averageBoxList[language][2] + averageTitleString[3 - landscape] + averageTitleString[averageType[1]] + averageNumber[1]);
+            document.querySelector("#movesAo12").innerHTML = (averageBoxList[language][3] + averageTitleString[3 - landscape] + averageTitleString[averageType[1]] + averageNumber[1]);
+            document.querySelector("#tpsAo12").innerHTML = ("TPS" + averageTitleString[3 - landscape] + averageTitleString[averageType[1]] + averageNumber[1]);
+        }
+    } else {
+        if (landscape == 0) {
+            landscape = 1;
+            document.querySelector("#timeAo5").innerHTML = (averageBoxList[language][2] + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
+            document.querySelector("#movesAo5").innerHTML = (averageBoxList[language][3] + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
+            document.querySelector("#tpsAo5").innerHTML = ("TPS" + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
+            document.querySelector("#timeAo12").innerHTML = (averageBoxList[language][2] + averageTitleString[3 - landscape] + averageTitleString[averageType[1]] + averageNumber[1]);
+            document.querySelector("#movesAo12").innerHTML = (averageBoxList[language][3] + averageTitleString[3 - landscape] + averageTitleString[averageType[1]] + averageNumber[1]);
+            document.querySelector("#tpsAo12").innerHTML = ("TPS" + averageTitleString[3 - landscape] + averageTitleString[averageType[1]] + averageNumber[1]);
+        }
+    }
+}
+
 function genBase(base) {
     numberBaseList[0] = 0;
     numberBaseList[1] = 1;
@@ -879,7 +903,7 @@ function updateStatus() {
         multibldContent = "[" + infoBarList[language][0] + (multibldProgress % multibldLength + 1) + " / " + multibldLength + "] ";
     }
     if (solveInProgress) {
-        realTime = Math.round((currentTime - startTime) / (1000 / timerAccuracy)) / timerAccuracy;
+        realTime = convertAccuracy((currentTime - startTime) / 1000);
         if (bld) {
             if (updateFreq == 0) {
                 timeContent = "-- [--]";
@@ -892,7 +916,7 @@ function updateStatus() {
                     switch (updateFreq) {
                         case (60):
                             timeContent = timeConvert(realTime) + ' [' + timeConvert(memoTime) + ']';
-                            tpsContent = Math.round(moves * timerAccuracy / (realTime - memoTime)) / timerAccuracy;
+                            tpsContent = convertAccuracy(moves / (realTime - memoTime));
                             break;
                         case (10):
                             timeContent = timeConvert(Math.floor(realTime * 10) / 10) + ' [' + timeConvert(Math.floor(memoTime * 10) / 10) + ']';
@@ -936,7 +960,7 @@ function updateStatus() {
                     switch (updateFreq) {
                         case (60):
                             timeContent = timeConvert(realTime);
-                            tpsContent = Math.round(moves * timerAccuracy / realTime) / timerAccuracy;
+                            tpsContent = convertAccuracy(moves / realTime);
                             break;
                         case (10):
                             timeContent = timeConvert(Math.floor(realTime * 10) / 10);
@@ -952,13 +976,13 @@ function updateStatus() {
             }
         }
     } else {
-        realTime = Math.round((endTime - startTime) / (1000 / timerAccuracy)) / timerAccuracy;
+        realTime = convertAccuracy((endTime - startTime) / 1000);
         movesContent = moves;
         if (bld) {
             if (bldFinishMemo) {
                 memoTime = (memoFinishTime - startTime) / 1000;
                 timeContent = timeConvert(realTime) + ' [' + timeConvert(memoTime) + ']';
-                tpsContent = Math.round(moves * timerAccuracy / (realTime - memoTime)) / timerAccuracy;
+                tpsContent = convertAccuracy(moves / (realTime - memoTime));
             } else {
                 timeContent = timeConvert(realTime) + ' [' + timeConvert(realTime) + ']';
                 tpsContent = "0";
@@ -968,7 +992,7 @@ function updateStatus() {
             if (realTime == 0 && (moves != 0 || !(solveInProgress))) {
                 tpsContent = "0";
             } else {
-                tpsContent = Math.floor(moves * timerAccuracy / realTime) / timerAccuracy;
+                tpsContent = convertAccuracy(moves / realTime);
             }
         }
     }
@@ -977,7 +1001,7 @@ function updateStatus() {
 
 function timeConvert(inputTime) {
     if (useMinutes) {
-        let tempMinutes = Math.floor(inputTime / 60), tempSeconds = Math.round((inputTime % 60) * timerAccuracy) / timerAccuracy;
+        let tempMinutes = Math.floor(inputTime / 60), tempSeconds = convertAccuracy(inputTime % 60);
         if (useHours) {
             if (tempMinutes >= 60) {
                 return (Math.floor(tempMinutes / 60) + ":" + tempMinutes % 60 + ":" + tempSeconds);
@@ -1081,8 +1105,8 @@ function getLocationOnCanvas(x, y) {
 function clickMove(canvasX, canvasY) {
     let clickX, clickY;
     if ((canvasX <= puzzleSize) && (canvasY <= puzzleSize)) {
+        let tempX = spaceX, tempY = spaceY;
         if ((canvasX % (puzzlePieceSize + puzzleMargin) <= puzzlePieceSize) && (canvasY % (puzzlePieceSize + puzzleMargin) <= puzzlePieceSize)) {
-            let tempX = spaceX, tempY = spaceY;
             clickX = Math.floor(canvasX / (puzzlePieceSize + puzzleMargin));
             clickY = Math.floor(canvasY / (puzzlePieceSize + puzzleMargin));
             if (multibld && !(multibldFinishMemo)) {
@@ -1097,7 +1121,11 @@ function clickMove(canvasX, canvasY) {
                     }
                 }
             }
-            redraw();
+            if ((clickX == tempX) && (clickY == tempY)) {
+                updateStatus();
+            } else {
+                redraw();
+            }
         }
     }
 }

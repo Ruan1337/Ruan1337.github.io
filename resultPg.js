@@ -1,19 +1,25 @@
 let resultSolves = [], sessionSolves = 0, resultSession = 1, finishedSolves = 0;
 let resultArray = [], sessionName = ["0", "1"];
-let averageNumber = [5, 12], averageType = [1, 1]; // 1 = ao, 0 = mo
+let averageNumber = [5, 12], averageType = [1, 1], averageTitleString = ["Mo", "Ao", "", "<br>"];
 let timeAo = movesAo = tpsAo = 0, maxIndex = [0, 0, 0], minIndex = [0, 0, 0];
 let sessionStatSum = [0, 0, 0];
+let dnfs = 0, landscape = 1;
+if (window.innerWidth < window.innerHeight) {
+    landscape = 0;
+}
 
 function sessionChange(x) {
-    clearResult();
     resultSession = x;
-    document.querySelector('#sessionStats').innerHTML = infoBarList[language][7] + finishedSolves + "/" + sessionSolves + "): " + infoBarList[language][2] + 0 + infoBarList[language][3] + 0 + infoBarList[language][4] + 0;
     localStorage.setItem("resultSession", resultSession);
     if (resultSolves[resultSession] > 0) {
         reloadResult();
     } else {
+        clearResult();
         resultArray[resultSession] = [];
         resultSolves[resultSession] = 0;
+        sessionSolves = 0;
+        finishedSolves = 0;
+        updateSessionStats();
     }
 }
 
@@ -37,20 +43,20 @@ function getDetails() {
         if (tempColIndex == 0) {
             if (confirm(resultInteractionList[language][0])) {
                 if (tempRowIndex != sessionSolves) {
+                    if (resultArray[resultSession][tempRowIndex][0] >= 0)
+                        finishedSolves --;
                     for (let i = tempRowIndex; i < sessionSolves; i++) {
                         for (let j = 0; j < 4; j ++) {
                             resultArray[resultSession][i][j] = resultArray[resultSession][i + 1][j];
                         }
                     }
                     sessionSolves --;
-                    // finished solves?
                     resultSolves[resultSession] --;
                     localStorage.setItem("resultSolves", JSON.stringify(resultSolves));
                     localStorage.setItem("resultArray", JSON.stringify(resultArray));
                     reloadResult();
                 } else {
                     sessionSolves --;
-                    // finished solves?
                     resultSolves[resultSession] --;
                     localStorage.setItem("resultSolves", JSON.stringify(resultSolves));
                     localStorage.setItem("resultArray", JSON.stringify(resultArray));
@@ -58,15 +64,28 @@ function getDetails() {
                 }
             }
         } else if (tempColIndex < 4) {
-            alertMessage = tempRowIndex + "." + infoBarList[2] + (Math.floor(resultArray[resultSession][tempRowIndex][0] * timerAccuracy) / timerAccuracy) + infoBarList[3] + resultArray[resultSession][tempRowIndex][1] + infoBarList[4] + (Math.floor(resultArray[resultSession][tempRowIndex][1] / resultArray[resultSession][tempRowIndex][0] * timerAccuracy) / timerAccuracy) 
-            + "\n" + buttonLanguageList[1] + ": " + resultArray[resultSession][tempRowIndex][2] + "\n" + resultArray[resultSession][tempRowIndex][3];
+            if (resultArray[resultSession][tempRowIndex][0] < 0) {
+                if (resultArray[resultSession][tempRowIndex][1] >= 0) {
+                    alertMessage = tempRowIndex + ". DNF (" + averageBoxList[language][2] + " " + convertAccuracy(resultArray[resultSession][tempRowIndex][0]) + "[" + resultArray[resultSession][tempRowIndex][4] + "]" + infoBarList[language][3] + Math.abs(resultArray[resultSession][tempRowIndex][1]) + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / (Math.abs(resultArray[resultSession][tempRowIndex][0]) - resultArray[resultSession][tempRowIndex][4])) + ")"
+                    + "\n" + buttonLanguageList[language][1] + ": " + resultArray[resultSession][tempRowIndex][2] + "\n" + resultArray[resultSession][tempRowIndex][3];
+                } else {
+                    alertMessage = tempRowIndex + ". DNF" + resultArray[resultSession][tempRowIndex][5] + " (" + averageBoxList[language][2] + " " + convertAccuracy(resultArray[resultSession][tempRowIndex][0])  + "[" + resultArray[resultSession][tempRowIndex][4] + "]" + infoBarList[language][3] + Math.abs(resultArray[resultSession][tempRowIndex][1]) + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / (Math.abs(resultArray[resultSession][tempRowIndex][0]) - resultArray[resultSession][tempRowIndex][4])) + ")"
+                    + "\n" + buttonLanguageList[language][1] + ": " + resultArray[resultSession][tempRowIndex][2] + "\n" + resultArray[resultSession][tempRowIndex][3];
+                }
+            } else if (resultArray[resultSession][tempRowIndex][4] > 0) {
+                alertMessage = tempRowIndex + ". " + averageBoxList[language][2] + " " + convertAccuracy(resultArray[resultSession][tempRowIndex][0]) + "[" + resultArray[resultSession][tempRowIndex][4] + "]" + infoBarList[language][3] + resultArray[resultSession][tempRowIndex][1] + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / (resultArray[resultSession][tempRowIndex][0] - resultArray[resultSession][tempRowIndex][4]))
+                + "\n" + buttonLanguageList[language][1] + ": " + resultArray[resultSession][tempRowIndex][2] + "\n" + resultArray[resultSession][tempRowIndex][3];
+            } else {
+                alertMessage = tempRowIndex + ". " + infoBarList[language][2] + convertAccuracy(resultArray[resultSession][tempRowIndex][0]) + infoBarList[language][3] + resultArray[resultSession][tempRowIndex][1] + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / resultArray[resultSession][tempRowIndex][0]) 
+                + "\n" + buttonLanguageList[language][1] + ": " + resultArray[resultSession][tempRowIndex][2] + "\n" + resultArray[resultSession][tempRowIndex][3];
+            }
             alert(alertMessage);
         } else {
             let tempAverageType;
             (tempColIndex < 7) ? tempAverageType = 0 : tempAverageType = 1;
-            let timeListString = averageBoxList[language][2] + ": " + document.querySelector("#resultTable").rows[tempRowIndex].cells[4].innerHTML + " = ";
-            let movesListString = averageBoxList[language][3] + ": " + document.querySelector("#resultTable").rows[tempRowIndex].cells[5].innerHTML + " = ";
-            let tpsListString = "TPS: " + document.querySelector("#resultTable").rows[tempRowIndex].cells[6].innerHTML + " = ";
+            let timeListString = averageBoxList[language][2] + ": " + document.querySelector("#resultTable").rows[tempRowIndex].cells[4 + 3 * tempAverageType].innerHTML + " = ";
+            let movesListString = averageBoxList[language][3] + ": " + document.querySelector("#resultTable").rows[tempRowIndex].cells[5 + 3 * tempAverageType].innerHTML + " = ";
+            let tpsListString = "TPS: " + document.querySelector("#resultTable").rows[tempRowIndex].cells[6 + 3 * tempAverageType].innerHTML + " = ";
             if (tempRowIndex >= averageNumber[tempAverageType]) {
                 if (language == 0) {
                     alertMessage = averageBoxList[language][1 - averageType[tempAverageType]] + " of " + averageNumber[tempAverageType] + ":\n";
@@ -85,12 +104,13 @@ function getDetails() {
                         }
                     }
                 } else {
-                    let dnfs = 0, tempMaxIndex = [], tempMinIndex = [];
+                    let tempMaxIndex = [], tempMinIndex = [];
+                    dnfs = 0;
                     for (let i = 0; i < 3; i ++) {
                         tempMaxIndex[i] = tempRowIndex - averageNumber[tempAverageType] + 1;
                         tempMinIndex[i] = tempRowIndex - averageNumber[tempAverageType] + 1;
                     }
-                    for (let i = tempRowIndex - averageNumber[tempAverageType] + 2; i <= tempRowIndex; i ++) {
+                    for (let i = tempRowIndex - averageNumber[tempAverageType] + 1; i <= tempRowIndex; i ++) {
                         if ((resultArray[resultSession][i][0] < 0) && (dnfs == 0)) {
                             dnfs ++;
                             tempMaxIndex[0] = i;
@@ -101,14 +121,14 @@ function getDetails() {
                                 if (resultArray[resultSession][i][j] > resultArray[resultSession][tempMaxIndex[j]][j])
                                     tempMaxIndex[j] = i;
                             }
-                            if ((resultArray[resultSession][i][1] / resultArray[resultSession][i][0]) > (resultArray[resultSession][tempMaxIndex[2]][1] / resultArray[resultSession][tempMaxIndex[2]][0]))
+                            if (resultArray[resultSession][i][1] / (resultArray[resultSession][i][0] - resultArray[resultSession][i][4]) > resultArray[resultSession][tempMaxIndex[2]][1] / (resultArray[resultSession][tempMaxIndex[2]][0] - resultArray[resultSession][tempMaxIndex[2]][4]))
                                 tempMaxIndex[2] = i;
                         }
                         for (let j = 0; j < 2; j ++) {
-                            if (resultArray[resultSession][i][j] <= resultArray[resultSession][tempMinIndex[j]][j])
+                            if (Math.abs(resultArray[resultSession][i][j]) <= Math.abs(resultArray[resultSession][tempMinIndex[j]][j]))
                                 tempMinIndex[j] = i;
                         }
-                        if ((resultArray[resultSession][i][1] / resultArray[resultSession][i][0]) <= (resultArray[resultSession][tempMinIndex[2]][1] / resultArray[resultSession][tempMinIndex[2]][0]))
+                        if (Math.abs(resultArray[resultSession][i][1] / (Math.abs(resultArray[resultSession][i][0]) - resultArray[resultSession][i][4])) <= Math.abs(resultArray[resultSession][tempMinIndex[2]][1] / (Math.abs(resultArray[resultSession][tempMinIndex[2]][0]) - resultArray[resultSession][tempMinIndex[2]][4])))
                             tempMinIndex[2] = i;
                     }
                     for (let i = tempRowIndex - averageNumber[tempAverageType] + 1; i <= tempRowIndex; i ++) {
@@ -185,11 +205,10 @@ function clearSession() {
 function clearResult() {
     let averageString = ["", ""];
     for (let i = 0; i < 2; i++) {
-        if (averageType[i] == 1) {
-            averageString[i] = averageString[i] + "Ao" + averageNumber[i];
-        } else {
-            averageString[i] = averageString[i] + "Mo" + averageNumber[i];
+        if (window.innerWidth < window.innerHeight) {
+            averageString[i] += "<br>";
         }
+        averageString[i] += (averageTitleString[averageType[i]] + averageNumber[i]);
     }
     timeAo = movesAo = tpsAo = 0;
     sessionStatSum = [0, 0, 0];
@@ -203,56 +222,93 @@ function reloadResult() {
     clearResult();
     if (resultSolves[resultSession] > 0) {
         sessionSolves = resultSolves[resultSession];
-        // finished solves?
+        finishedSolves = sessionSolves;
+        for (let i = 1; i <= sessionSolves; i++) {
+            if (resultArray[resultSession][i][0] < 0)
+                finishedSolves --;
+        }
         for (let i = 1; i <= sessionSolves; i++) {
             let newResult = document.createElement("tr");
-            newResult.innerHTML = "<td>" + i + "</td> <td>" + resultArray[resultSession][i][0] + "</td> <td>" + resultArray[resultSession][i][1] + "</td> <td>" + Math.floor(resultArray[resultSession][i][1] / resultArray[resultSession][i][0] * 1000) / 1000; + "</td>";
-            sessionStatSum[0] += resultArray[resultSession][i][0];
-            sessionStatSum[1] += resultArray[resultSession][i][1];
-            sessionStatSum[2] += (resultArray[resultSession][i][1] / resultArray[resultSession][i][0]);
+            if (resultArray[resultSession][i][0] < 0) {
+                newResult.innerHTML = "<td>" + i + "</td> <td>DNF</td> <td>DNF</td> <td>DNF</td>";
+            } else {
+                sessionStatSum[0] += resultArray[resultSession][i][0];
+                sessionStatSum[1] += resultArray[resultSession][i][1];
+                if (resultArray[resultSession][i][4] > 0) {
+                    sessionStatSum[2] += resultArray[resultSession][i][1] / (resultArray[resultSession][i][0] - resultArray[resultSession][i][4]);
+                    newResult.innerHTML = "<td>" + i + "</td> <td>" + resultArray[resultSession][i][0] + "</td> <td>" + resultArray[resultSession][i][1] + "</td> <td>" + convertAccuracy(resultArray[resultSession][i][1] / (Math.abs(resultArray[resultSession][i][0]) - resultArray[resultSession][i][4])) + "</td>";
+                } else {
+                    sessionStatSum[2] += resultArray[resultSession][i][1] / resultArray[resultSession][i][0];
+                    newResult.innerHTML = "<td>" + i + "</td> <td>" + resultArray[resultSession][i][0] + "</td> <td>" + resultArray[resultSession][i][1] + "</td> <td>" + convertAccuracy(resultArray[resultSession][i][1] / resultArray[resultSession][i][0]) + "</td>";
+                }
+            }
             for (let l = 0; l < 2; l++) {
                 if (i < averageNumber[l]) {
                     newResult.innerHTML = newResult.innerHTML + "<td> - </td> <td> - </td> <td> - </td>";
                 } else {
                     timeAo = movesAo = tpsAo = 0;
+                    dnfs = 0;
                     if (averageType[l] == 1) {
                         for (let m = 0; m < 3; m++) {
                             maxIndex[m] = i - averageNumber[0] + 1;
                             minIndex[m] = i - averageNumber[0] + 1;
                         }
-                        for (let k = i - averageNumber[l] + 2; k <= i; k++) {
-                            for (let j = 0; j < 2; j ++) {
-                                if (resultArray[resultSession][k][j] > resultArray[resultSession][maxIndex[j]][j])
-                                    maxIndex[j] = k;
-                                if (resultArray[resultSession][k][j] <= resultArray[resultSession][minIndex[j]][j])
-                                    minIndex[j] = k;
-                            }
-                            if (Math.floor(resultArray[resultSession][k][1] / resultArray[resultSession][k][0]) > Math.floor(resultArray[resultSession][maxIndex[2]][1] / resultArray[resultSession][maxIndex[2]][0]))
+                        for (let k = i - averageNumber[l] + 1; k <= i; k++) {
+                            if (resultArray[resultSession][k][0] < 0) {
+                                dnfs ++;
+                                maxIndex[0] = k;
+                                maxIndex[1] = k;
                                 maxIndex[2] = k;
-                            if (Math.floor(resultArray[resultSession][k][1] / resultArray[resultSession][k][0]) <= Math.floor(resultArray[resultSession][minIndex[2]][1] / resultArray[resultSession][minIndex[2]][0]))
+                            }
+                            if (dnfs == 0) {
+                                if (resultArray[resultSession][k][0] > resultArray[resultSession][maxIndex[0]][0])
+                                    maxIndex[0] = k;
+                                if (resultArray[resultSession][k][1] > resultArray[resultSession][maxIndex[1]][1])
+                                    maxIndex[1] = k;
+                                if (resultArray[resultSession][k][1] / (resultArray[resultSession][k][0] - resultArray[resultSession][k][4]) > resultArray[resultSession][maxIndex[2]][1] / (resultArray[resultSession][maxIndex[2]][0] - resultArray[resultSession][maxIndex[2]][4]))
+                                    maxIndex[2] = k;
+                            }
+                            if (Math.abs(resultArray[resultSession][k][0]) <= Math.abs(resultArray[resultSession][minIndex[0]][0]))
+                                minIndex[0] = k;
+                            if (Math.abs(resultArray[resultSession][k][1]) <= Math.abs(resultArray[resultSession][minIndex[1]][1]))
+                                minIndex[1] = k;
+                            if (Math.abs(resultArray[resultSession][k][1] / (Math.abs(resultArray[resultSession][k][0]) - resultArray[resultSession][k][4])) <= Math.abs(resultArray[resultSession][minIndex[2]][1] / (Math.abs(resultArray[resultSession][minIndex[2]][0]) - resultArray[resultSession][minIndex[2]][4])))
                                 minIndex[2] = k;
                         }
+                        if (dnfs > 1) {
+                            newResult.innerHTML += "<td>DNF</td> <td>DNF</td> <td>DNF</td>";
+                            continue;
+                        }
                         for (let k = i - averageNumber[l] + 1; k <= i; k++) {
-                            if ((k != maxIndex[0]) && (k != minIndex[0])) {
+                            if ((k != maxIndex[0]) && (k != minIndex[0]))
                                 timeAo += resultArray[resultSession][k][0];
-                            }
                             if ((k != maxIndex[1]) && (k != minIndex[1]))
                                 movesAo += resultArray[resultSession][k][1];
                             if ((k != maxIndex[2]) && (k != minIndex[2]))
-                                tpsAo += (resultArray[resultSession][k][1] / resultArray[resultSession][k][0]);
+                                tpsAo += resultArray[resultSession][k][1] / (resultArray[resultSession][k][0] - resultArray[resultSession][k][4]);
                         }
-                        timeAo = Math.floor(timeAo / (averageNumber[l] - 2) * timerAccuracy) / timerAccuracy;
-                        movesAo = Math.floor(movesAo / (averageNumber[l] - 2) * timerAccuracy) / timerAccuracy;
-                        tpsAo = Math.floor(tpsAo / (averageNumber[l] - 2) * timerAccuracy) / timerAccuracy;
+                        timeAo = convertAccuracy(timeAo / (averageNumber[l] - 2));
+                        movesAo = convertAccuracy(movesAo / (averageNumber[l] - 2));
+                        tpsAo = convertAccuracy(tpsAo / (averageNumber[l] - 2));
                     } else {
+                        for (let k = i - averageNumber[l] + 1; k <= i; k++) {
+                            if (resultArray[resultSession][k][0] < 0) {
+                                dnfs ++;
+                                break;
+                            }
+                        }
+                        if (dnfs > 0) {
+                            newResult.innerHTML += "<td>DNF</td> <td>DNF</td> <td>DNF</td>";
+                            continue;
+                        }
                         for (let k = i - averageNumber[l] + 1; k <= i; k++) {
                             timeAo += resultArray[resultSession][k][0];
                             movesAo += resultArray[resultSession][k][1];
-                            tpsAo += (resultArray[resultSession][k][1] / resultArray[resultSession][k][0]);
+                            tpsAo += resultArray[resultSession][k][1] / (resultArray[resultSession][k][0] - resultArray[resultSession][k][4]);
                         }
-                        timeAo = Math.floor(timeAo / averageNumber[l] * timerAccuracy) / timerAccuracy;
-                        movesAo = Math.floor(movesAo / averageNumber[l] * timerAccuracy) / timerAccuracy;
-                        tpsAo = Math.floor(tpsAo / averageNumber[l] * timerAccuracy) / timerAccuracy;
+                        timeAo = convertAccuracy(timeAo / averageNumber[l]);
+                        movesAo = convertAccuracy(movesAo / averageNumber[l]);
+                        tpsAo = convertAccuracy(tpsAo / averageNumber[l]);
                     }
                     newResult.innerHTML += ("<td>" + timeAo + "</td> <td>" + movesAo + "</td> <td>" + tpsAo + "</td>");
                 }
@@ -268,10 +324,35 @@ function reloadResult() {
 
 function updateSessionStats() {
     if (sessionSolves > 0) {
-        document.querySelector('#sessionStats').innerHTML = infoBarList[language][7] + finishedSolves + "/" + sessionSolves + "): " + infoBarList[language][2] + Math.floor(sessionStatSum[0] / sessionSolves * timerAccuracy) / timerAccuracy + infoBarList[language][3] + Math.floor(sessionStatSum[1] / sessionSolves * timerAccuracy) / timerAccuracy + infoBarList[language][4] + Math.floor(sessionStatSum[2] / sessionSolves * timerAccuracy) / timerAccuracy;
+        document.querySelector('#sessionStats').innerHTML = infoBarList[language][7] + finishedSolves + "/" + sessionSolves + "): " + infoBarList[language][2] + convertAccuracy(sessionStatSum[0] / finishedSolves) + infoBarList[language][3] + convertAccuracy(sessionStatSum[1] / finishedSolves) + infoBarList[language][4] + convertAccuracy(sessionStatSum[2] / finishedSolves);
     } else {
-        document.querySelector('#sessionStats').innerHTML = infoBarList[language][7] + finishedSolves + "/" + sessionSolves + "): " + infoBarList[language][2] + 0 + infoBarList[language][3] + 0 + infoBarList[language][4] + 0;
+        document.querySelector('#sessionStats').innerHTML = infoBarList[language][7] + "0/0): " + infoBarList[language][2] + 0 + infoBarList[language][3] + 0 + infoBarList[language][4] + 0;
     }
+}
+
+function getSessionDetails() {
+    if (sessionSolves > 0) {
+        let alertMessage = infoBarList[language][7] + finishedSolves + "/" + sessionSolves + "):\n";
+        let timeListString = averageBoxList[language][2] + ": " + convertAccuracy(sessionStatSum[0] / finishedSolves) + " = ";
+        let movesListString = averageBoxList[language][3] + ": " + convertAccuracy(sessionStatSum[1] / finishedSolves) + " = ";
+        let tpsListString = "TPS: " + convertAccuracy(sessionStatSum[2] / finishedSolves) + " = ";
+        for (let i = 1; i <= sessionSolves; i++) {
+            timeListString += document.querySelector("#resultTable").rows[i].cells[1].innerHTML;
+            movesListString += document.querySelector("#resultTable").rows[i].cells[2].innerHTML;
+            tpsListString += document.querySelector("#resultTable").rows[i].cells[3].innerHTML;
+            if (i != sessionSolves) {
+                timeListString += ", ";
+                movesListString += ", ";
+                tpsListString += ", ";
+            }
+        }
+        alertMessage += (timeListString + "\n" + movesListString + "\n" + tpsListString);
+        alert(alertMessage);
+    }
+}
+
+function convertAccuracy(x) {
+    return Math.round(Math.abs(x) * timerAccuracy) / timerAccuracy;
 }
 
 function addResult() {
@@ -283,37 +364,71 @@ function addResult() {
     if (sessionSolves == 1) {
         resultArray[resultSession] = [];
     }
+    let tempUnsolved = [1, 1];
+    if (unsolved) 
+        tempUnsolved[0] = -1;
+    if (unsolved && multibld && (multibldFailed > 0))
+        tempUnsolved[1] = -1;
     resultArray[resultSession][sessionSolves] = [];
-    resultArray[resultSession][sessionSolves][0] = (currentTime - startTime) / timerAccuracy;
-    resultArray[resultSession][sessionSolves][1] = moves;
-    let tempTPS = Math.floor(moves / (currentTime - startTime) * 1000 * timerAccuracy) / timerAccuracy;
+    resultArray[resultSession][sessionSolves][0] = tempUnsolved[0] * (currentTime - startTime) / 1000;
+    resultArray[resultSession][sessionSolves][1] = tempUnsolved[1] * moves;
+    resultArray[resultSession][sessionSolves][2] = scrambleString;
+    resultArray[resultSession][sessionSolves][3] = timeString;
+    if (bld) {
+        resultArray[resultSession][sessionSolves][4] = (memoFinishTime - startTime) / 1000;
+    } else {
+        resultArray[resultSession][sessionSolves][4] = 0;
+    }
+    if (unsolved && multibld && (multibldFailed > 0))
+        resultArray[resultSession][sessionSolves][5] = "[" + (multibldLength - multibldFailed) + "/" + multibldLength + "]";
+    let tempTPS = Math.round(Math.abs(moves / (Math.abs(resultArray[resultSession][sessionSolves][0]) - resultArray[resultSession][sessionSolves][4]) * 1000)) / 1000;
+    let displayTime = convertAccuracy(resultArray[resultSession][sessionSolves][0]), displayTPS = convertAccuracy(tempTPS);
     let newResult = document.createElement("tr");
     newResult.className = "resultItem";
-    newResult.innerHTML = "<td>" + sessionSolves + "</td> <td>" + resultArray[resultSession][sessionSolves][0] + "</td> <td>" + resultArray[resultSession][sessionSolves][1] + "</td> <td>" + tempTPS + "</td>";
-    sessionStatSum[0] += resultArray[resultSession][sessionSolves][0];
-    sessionStatSum[1] += resultArray[resultSession][sessionSolves][1];
-    sessionStatSum[2] += (resultArray[resultSession][sessionSolves][1] / resultArray[resultSession][sessionSolves][0]);
+    if (tempUnsolved[0] > 0) {
+        sessionStatSum[0] += resultArray[resultSession][sessionSolves][0];
+        sessionStatSum[1] += resultArray[resultSession][sessionSolves][1];
+        sessionStatSum[2] += resultArray[resultSession][sessionSolves][1] / (resultArray[resultSession][sessionSolves][0] - resultArray[resultSession][sessionSolves][4]);
+        newResult.innerHTML = "<td>" + sessionSolves + "</td> <td>" + displayTime + "</td> <td>" + resultArray[resultSession][sessionSolves][1] + "</td> <td>" + displayTPS + "</td>";
+    } else {
+        newResult.innerHTML = "<td>" + sessionSolves + "</td> <td>DNF</td> <td>DNF</td> <td>DNF</td>";
+    }
     for (let l = 0; l < 2; l++) {
         if (sessionSolves < averageNumber[l]) {
-            newResult.innerHTML = newResult.innerHTML + "<td> - </td> <td> - </td> <td> - </td>";
+            newResult.innerHTML += "<td> - </td> <td> - </td> <td> - </td>";
         } else {
             timeAo = movesAo = tpsAo = 0;
+            dnfs = 0;
             if (averageType[l] == 1) {
                 for (let m = 0; m < 3; m++) {
                     maxIndex[m] = sessionSolves - averageNumber[0] + 1;
                     minIndex[m] = sessionSolves - averageNumber[0] + 1;
                 }
-                for (let k = sessionSolves - averageNumber[l] + 2; k <= sessionSolves; k++) {
-                    for (let j = 0; j < 2; j ++) {
-                        if (resultArray[resultSession][k][j] > resultArray[resultSession][maxIndex[j]][j])
-                            maxIndex[j] = k;
-                        if (resultArray[resultSession][k][j] <= resultArray[resultSession][minIndex[j]][j])
-                            minIndex[j] = k;
-                    }
-                    if (Math.floor(resultArray[resultSession][k][1] / resultArray[resultSession][k][0]) > Math.floor(resultArray[resultSession][maxIndex[2]][1] / resultArray[resultSession][maxIndex[2]][0]))
+                for (let k = sessionSolves - averageNumber[l] + 1; k <= sessionSolves; k++) {
+                    if (resultArray[resultSession][k][0] < 0) {
+                        dnfs ++;
+                        maxIndex[0] = k;
+                        maxIndex[1] = k;
                         maxIndex[2] = k;
-                    if (Math.floor(resultArray[resultSession][k][1] / resultArray[resultSession][k][0]) <= Math.floor(resultArray[resultSession][minIndex[2]][1] / resultArray[resultSession][minIndex[2]][0]))
+                    }
+                    if (dnfs == 0) {
+                        if (resultArray[resultSession][k][0] > resultArray[resultSession][maxIndex[0]][0])
+                            maxIndex[0] = k;
+                        if (resultArray[resultSession][k][1] > resultArray[resultSession][maxIndex[1]][1])
+                            maxIndex[1] = k;
+                        if (resultArray[resultSession][k][1] / (resultArray[resultSession][k][0] - resultArray[resultSession][k][4]) > resultArray[resultSession][maxIndex[2]][1] / (resultArray[resultSession][maxIndex[2]][0] - resultArray[resultSession][maxIndex[2]][4]))
+                            maxIndex[2] = k;
+                    }
+                    if (Math.abs(resultArray[resultSession][k][0]) <= Math.abs(resultArray[resultSession][minIndex[0]][0]))
+                        minIndex[0] = k;
+                    if (Math.abs(resultArray[resultSession][k][1]) <= Math.abs(resultArray[resultSession][minIndex[1]][1]))
+                        minIndex[1] = k;
+                    if (Math.abs(resultArray[resultSession][k][1] / (Math.abs(resultArray[resultSession][k][0]) - resultArray[resultSession][k][4])) <= Math.abs(resultArray[resultSession][minIndex[2]][1] / (Math.abs(resultArray[resultSession][minIndex[2]][0]) - resultArray[resultSession][minIndex[2]][4])))
                         minIndex[2] = k;
+                }
+                if (dnfs > 1) {
+                    newResult.innerHTML += "<td>DNF</td> <td>DNF</td> <td>DNF</td>";
+                    continue;
                 }
                 for (let k = sessionSolves - averageNumber[l] + 1; k <= sessionSolves; k++) {
                     if ((k != maxIndex[0]) && (k != minIndex[0]))
@@ -321,27 +436,34 @@ function addResult() {
                     if ((k != maxIndex[1]) && (k != minIndex[1]))
                         movesAo += resultArray[resultSession][k][1];
                     if ((k != maxIndex[2]) && (k != minIndex[2]))
-                        tpsAo += (resultArray[resultSession][k][1] / resultArray[resultSession][k][0]);
+                        tpsAo += resultArray[resultSession][k][1] / (resultArray[resultSession][k][0] - resultArray[resultSession][k][4]);
                 }
-
-                timeAo = Math.floor(timeAo / (averageNumber[l] - 2) * timerAccuracy) / timerAccuracy;
-                movesAo = Math.floor(movesAo / (averageNumber[l] - 2) * timerAccuracy) / timerAccuracy;
-                tpsAo = Math.floor(tpsAo / (averageNumber[l] - 2) * timerAccuracy) / timerAccuracy;
+                timeAo = convertAccuracy(timeAo / (averageNumber[l] - 2));
+                movesAo = convertAccuracy(movesAo / (averageNumber[l] - 2));
+                tpsAo = convertAccuracy(tpsAo / (averageNumber[l] - 2));
             } else {
+                for (let k = sessionSolves - averageNumber[l] + 1; k <= sessionSolves; k++) {
+                    if (resultArray[resultSession][k][0] < 0) {
+                        dnfs ++;
+                        break;
+                    }
+                }
+                if (dnfs > 0) {
+                    newResult.innerHTML += "<td>DNF</td> <td>DNF</td> <td>DNF</td>";
+                    continue;
+                }
                 for (let k = sessionSolves - averageNumber[l] + 1; k <= sessionSolves; k++) {
                     timeAo += resultArray[resultSession][k][0];
                     movesAo += resultArray[resultSession][k][1];
-                    tpsAo += (resultArray[resultSession][k][1] / resultArray[resultSession][k][0]);
+                    tpsAo += resultArray[resultSession][k][1] / (resultArray[resultSession][k][0] - resultArray[resultSession][k][4]);
                 }
-                timeAo = Math.floor(timeAo / averageNumber[l] * timerAccuracy) / timerAccuracy;
-                movesAo = Math.floor(movesAo / averageNumber[l] * timerAccuracy) / timerAccuracy;
-                tpsAo = Math.floor(tpsAo / averageNumber[l] * timerAccuracy) / timerAccuracy;
+                timeAo = convertAccuracy(timeAo / averageNumber[l]);
+                movesAo = convertAccuracy(movesAo / averageNumber[l]);
+                tpsAo = convertAccuracy(tpsAo / averageNumber[l]);
             }
             newResult.innerHTML += ("<td>" + timeAo + "</td> <td>" + movesAo + "</td> <td>" + tpsAo + "</td>");
         }
     }
-    resultArray[resultSession][sessionSolves][2] = scrambleString;
-    resultArray[resultSession][sessionSolves][3] = timeString; // solved time
     document.querySelector("#resultTable").appendChild(newResult);
     localStorage.setItem("resultSolves", JSON.stringify(resultSolves));
     localStorage.setItem("resultArray", JSON.stringify(resultArray));

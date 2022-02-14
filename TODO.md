@@ -15,7 +15,8 @@ To-do functions and issues are listed here.
 - click on a single solve to get detailed information [done on 4.1.2]  
 - click on an average list to get information [done on 4.1.2]  
 - overall statistics of current session [done on 4.1.2]  
-- set DNFs in stats  
+- set DNFs in stats [done on 4.1.3]  
+- click on session mean to get information [done on 4.1.3]  
   
 - 无限分组  
 - 改变分组名称 [4.1.2 完成]  
@@ -23,7 +24,8 @@ To-do functions and issues are listed here.
 - 点击单次成绩获取详细信息 [4.1.2 完成]  
 - 点击平均列表获取信息 [4.1.2 完成]  
 - 当前分组的整体统计 [4.1.2 完成]  
-- 在统计中设DNF  
+- 在统计中设DNF [4.1.3 完成]  
+- 点击整体统计获取详细信息 [4.1.3 完成]  
 
 Further
 ----------
