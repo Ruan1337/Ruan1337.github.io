@@ -113,7 +113,11 @@ function genColor() {
     colorList = [];
     switch(patternScheme) {
         case('Fringes'): case('Live Fringes'):
-            colorNum = Math.min(rows, cols) - 1 + Math.abs(rows - cols);
+            if (rows == cols) {
+                colorNum = rows - 1;
+            } else {
+                colorNum = Math.max(cols - 1, rows - 1)
+            }
         break;
         case('Rows, Cols'): case('Live Rows, Cols'):
             colorNum = Math.abs(cols - rows) + (Math.min(rows, cols) - 1) * 2;
@@ -131,7 +135,7 @@ function genColor() {
             colorNum = 1;
         break;
     }
-    useRainbow = patternScheme.indexOf('Live') < 0;// boolean
+    useRainbow = patternScheme.indexOf('Live') < 0;
     if (useRainbow) {
         hslColor();
     }
@@ -173,29 +177,43 @@ function defineType() {
     pieceType = [];
     switch(patternScheme) {
         case('Fringes'): case('Live Fringes'):
-            for (let i = 1;i < rows * cols;i++) {
-                pieceType[i] = Math.min((i - 1) % cols, Math.floor((i - 1) / cols));
+            if (rows == cols) {
+                for (let i = 1;i < rows * cols;i++) {
+                    pieceType[i] = Math.min((i - 1) % cols, Math.floor((i - 1) / cols));
+                }
+            } else if (rows > cols) {
+                for (let i = 1;i < rows * cols;i++) {
+                    if (Math.floor((i - 1) / cols) <= rows - cols)
+                        pieceType[i] = Math.floor((i - 1) / cols);
+                    else
+                        pieceType[i] = Math.min((i - 1) % cols - cols + rows, Math.floor((i - 1) / cols));
+                }
+            } else {
+                for (let i = 1;i < rows * cols;i++) {
+                    if (Math.floor((i - 1) % cols) <= cols - rows)
+                        pieceType[i] = Math.floor((i - 1) % cols);
+                    else
+                        pieceType[i] = Math.min((i - 1) % cols, Math.floor((i - 1) / cols) + cols - rows);
+                }
             }
         break;
         case('Rows, Cols'): case('Live Rows, Cols'):
             if (rows == cols) {
                 for (let i = 1;i < rows * cols;i++) {
-                    if ((i - 1) % cols >= Math.floor((i - 1) / cols)) {
+                    if ((i - 1) % cols >= Math.floor((i - 1) / cols))
                         pieceType[i] = Math.floor((i - 1) / cols) * 2;
-                    } else {
+                    else
                         pieceType[i] = (i % cols - 1) * 2 + 1;
-                    }
                 }
             } else if (rows > cols) {
                 for (let i = 1;i < rows * cols;i++) {
                     if (Math.floor((i - 1) / cols) <= rows - cols) {
                         pieceType[i] = Math.floor((i - 1) / cols);
                     } else {
-                        if ((i - 1) % cols + rows - cols >= Math.floor((i - 1) / cols)) {
+                        if ((i - 1) % cols + rows - cols >= Math.floor((i - 1) / cols))
                             pieceType[i] = Math.floor((i - 1) / cols - rows + cols) * 2 + rows - cols;
-                        } else {
+                        else
                             pieceType[i] = (i % cols - 1) * 2 + 1 + rows - cols;
-                        }
                     }
                 }
             } else {
@@ -203,47 +221,40 @@ function defineType() {
                     if (Math.floor((i - 1) % cols) <= cols - rows) {
                         pieceType[i] = Math.floor((i - 1) % cols);
                     } else {
-                        if ((i - 1) % cols + rows - cols > Math.floor((i - 1) / cols)) {
+                        if ((i - 1) % cols + rows - cols > Math.floor((i - 1) / cols))
                             pieceType[i] = Math.floor((i - 1) / cols) * 2 - rows + cols + 1;
-                        } else {
+                        else
                             pieceType[i] = (i % cols - cols + rows - 1) * 2 + cols - rows;
-                        }
                     }
                 }
             }
         break;
         case('Rows'): case('Live Rows'):
-            for (let i = 1;i < rows * cols;i++) {
+            for (let i = 1;i < rows * cols;i++)
                 pieceType[i] = Math.floor((i - 1) / cols);
-            }
         break;
         case('Cols'): case('Live Cols'):
-            for (let i = 1;i < rows * cols;i++) {
+            for (let i = 1;i < rows * cols;i++)
                 pieceType[i] = (i - 1) % cols;
-            }
         break;
         case('Mono'):
-            for (let i = 1;i < rows * cols;i++) {
+            for (let i = 1;i < rows * cols;i++)
                 pieceType[i] = 0;
-            }
         break;
         case('L2R'): case('Live L2R'):
             for (let i = 1;i < rows * cols;i++) {
-                if (Math.floor((i - 1) / cols) < rows - 2) {
+                if (Math.floor((i - 1) / cols) < rows - 2)
                     pieceType[i] = Math.floor((i - 1) / cols);
-                } else {
+                else
                     pieceType[i] = (i - 1) % cols + rows - 2;
-                }
-
             }
         break;
         case('L2C'): case('Live L2C'):
             for (let i = 1;i < rows * cols;i++) {
-                if ((i - 1) % cols < cols - 2) {
+                if ((i - 1) % cols < cols - 2)
                     pieceType[i] = (i - 1) % cols;
-                } else {
+                else
                     pieceType[i] = Math.floor((i - 1) / cols) + cols - 2;
-                }
             }
         break;
     }
@@ -510,7 +521,8 @@ function afterScramble() {
         redraw();
     }
     if (!(useRainbow)) {
-        checkLiveSolved();
+        liveIndex = 0;
+        checkLiveSolved(0);
     }
     controlCustomizeBtn();
     redrawPuzzle();
@@ -660,9 +672,6 @@ function customizeScramble() {
             puzzle[i][j] = inputPuzzle[i][j];
         }
     }
-    if (!(useRainbow)) {
-        checkLiveSolved();
-    }
     defineType();
     genColor();
     afterScramble();
@@ -714,18 +723,106 @@ function checkNewSolve() {
     }
 }
 
-function checkLiveSolved(){
+function checkLiveSolved(x){
     unsolved = false;
     if (!(useRainbow)) {
-        let tempIndex = 0, solvedPieces = 0;
+        let tempIndex = Math.max(0, liveIndex - x), solvedPieces, startIndexX = 0, startIndexY = 0;
+        if ((patternScheme == 'Rows, Cols') || (patternScheme == 'Live Rows, Cols')) {
+            if (rows == cols) {
+                solvedPieces = Math.floor((tempIndex + 1) / 2) * cols + Math.floor(tempIndex / 2) * (rows - Math.floor((tempIndex + 1) / 2));
+                startIndexX = Math.floor(tempIndex / 2);
+                startIndexY = Math.floor((tempIndex + 1) / 2);
+            } else if (rows > cols) {
+                if (tempIndex < rows - cols) {
+                    solvedPieces = tempIndex * cols;
+                    startIndexX = 0;
+                    startIndexY = tempIndex;
+                } else {
+                    solvedPieces = (rows - cols) * cols + Math.floor((tempIndex - rows + cols + 1) / 2) * cols + Math.floor((tempIndex - rows + cols) / 2) * (rows - Math.floor((tempIndex + rows - cols + 1) / 2));
+                    startIndexX = Math.floor((tempIndex - rows + cols) / 2);
+                    startIndexY = Math.floor((tempIndex - rows + cols + 1) / 2);
+                }
+            } else {
+                if (tempIndex < cols - rows) {
+                    solvedPieces = tempIndex * rows;
+                    startIndexX = tempIndex;
+                    startIndexY = 0;
+                } else {
+                    solvedPieces = (cols - rows) * rows + Math.floor((tempIndex - cols + rows + 1) / 2) * rows + Math.floor((tempIndex - cols + rows) / 2) * (cols - Math.floor((tempIndex + cols - rows + 1) / 2));
+                    startIndexX = Math.floor((tempIndex - cols + rows + 1) / 2);
+                    startIndexY = Math.floor((tempIndex - cols + rows) / 2);
+                }
+            }
+        } else if (patternScheme == 'Mono') {
+            solvedPieces = 0;
+            startIndexX = 0;
+            startIndexY = 0;
+        } else if ((patternScheme == 'Rows') || (patternScheme == 'Live Rows')) {
+            solvedPieces = tempIndex * cols;
+            startIndexX = 0;
+            startIndexY = tempIndex;
+        } else if ((patternScheme == 'Cols') || (patternScheme == 'Live Cols')) {
+            solvedPieces = tempIndex * rows;
+            startIndexX = tempIndex;
+            startIndexY = 0;
+        } else if ((patternScheme == 'L2R') || (patternScheme == 'Live L2R')) {
+            if (tempIndex < (rows - 2)) {
+                solvedPieces = tempIndex * cols;
+                startIndexX = 0;
+                startIndexY = tempIndex;
+            } else {
+                solvedPieces = (rows - 2) * cols + (tempIndex - rows + 2) * 2;
+                startIndexX = tempIndex - rows + 2;
+                startIndexY = rows - 2;
+            }
+        } else if ((patternScheme == 'L2C') || (patternScheme == 'Live L2C')) {
+            if (tempIndex < (cols - 2)) {
+                solvedPieces = tempIndex * rows;
+                startIndexX = tempIndex;
+                startIndexY = 0;
+            } else {
+                solvedPieces = (cols - 2) * rows + (tempIndex - cols + 2) * 2;
+                startIndexX = cols - 2;
+                startIndexY = tempIndex - cols + 2;
+            }
+        } else if ((patternScheme == 'Fringes') || (patternScheme == 'Live Fringes')) {
+            if (rows == cols) {
+                solvedPieces = tempIndex * (rows + cols - tempIndex);
+                startIndexX = tempIndex;
+                startIndexY = tempIndex;
+            } else if (rows > cols) {
+                if (tempIndex < (rows - cols)) {
+                    solvedPieces = tempIndex * cols;
+                    startIndexX = 0;
+                    startIndexY = tempIndex;
+                } else {
+                    solvedPieces = (rows - cols) * cols + (tempIndex - rows + cols) * (2 * cols - (tempIndex - rows + cols));
+                    startIndexX = tempIndex - rows + cols;
+                    startIndexY = tempIndex;
+                }
+            } else {
+                if (tempIndex < (cols - rows)) {
+                    solvedPieces = tempIndex * rows;
+                    startIndexX = tempIndex;
+                    startIndexY = 0;
+                } else {
+                    solvedPieces = (cols - rows) * rows + (tempIndex - cols + rows) * (2 * rows - (tempIndex - cols + rows));
+                    startIndexX = tempIndex;
+                    startIndexY = tempIndex + rows - cols;
+                }
+            }
+        }
         do {
-            for (let i = 1;i < rows * cols;i++) {
-                if (pieceType[i] == tempIndex) {
-                    if (puzzle[Math.floor((i - 1) / cols)][(i - 1) % cols] != i) {
-                        unsolved = true;
-                        break;
-                    } else {
-                        solvedPieces++;
+            for (let i = startIndexY; i < rows; i++) {
+                for (let j = startIndexX; j < cols; j++) {
+                    if ((i == (rows - 1)) && (j == (cols - 1))) {
+                    } else if (pieceType[i * cols + j + 1] == tempIndex) {
+                        if (puzzle[i][j] != (i * cols + j + 1)) {
+                            unsolved = true;
+                            break;
+                        } else {
+                            solvedPieces++;
+                        }
                     }
                 }
             }
@@ -763,7 +860,19 @@ function move(moveDirection) {
             moves++;
         }
     }
-    checkLiveSolved();
+    if (moveDirection <= 1) {
+        checkLiveSolved(0);
+    } else {
+        if (((patternScheme == 'L2R') || (patternScheme == 'Live L2R')) && (liveIndex >= rows - 2) && (moveDirection == 3)) {
+            checkLiveSolved(cols);
+        } else if (((patternScheme == 'L2C') || (patternScheme == 'Live L2C')) && (liveIndex >= cols - 2) && (moveDirection == 2)) {
+            checkLiveSolved(rows);
+        } else if ((patternScheme == 'Fringes') || (patternScheme == 'Live Fringes')) {
+            checkLiveSolved(1);
+        } else {
+            checkLiveSolved(2);
+        }
+    }
 }
 
 function setStroke(j, i) {
@@ -838,7 +947,6 @@ function redrawPuzzle() {
             }
         }
     }
-    // add a section of coordinates? i.e. start from 0
     ctx.font = puzzleTextSize + "px sans-serif";
     ctx.fillStyle = puzzleTextColor;
     ctx.textBaseline = "middle";

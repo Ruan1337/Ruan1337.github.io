@@ -12,7 +12,7 @@
         <link rel="icon" href="icon.png" />
     </head>
 
-    <body onload="initTouch(); setLanguage(true, 0);">
+    <body onload="initTouch();">
         <div id="pageRow" style="text-align: center;">
             <input id="backBtn" style="visibility: hidden;" type="button" value="Puzzle" onclick="setPage(0); resetTimer(); controlCustomizeBtn(); initPuzzle(); redraw();">
             <input id="resultBtn" type="button" value="Result" onclick="setPage(1); resetTimer(); controlCustomizeBtn(); initPuzzle();">
@@ -84,6 +84,9 @@
         </div>
         <div class="pg" id="settingPg" style="display: none;">
             <table id="settingsTable">
+                <tr> <td class="setting">
+                    <span> <a href="https://github.com/Ruan1337/Ruan1337.github.io" id="about" target="_blank">About</a> </span>
+                </td> </tr>
                 <tr> <td class="title">
                     <span id="titleLabel1"> -----Puzzle----- </span>
                 </td> </tr>
@@ -300,9 +303,6 @@
                         <option value="0"> English </option>
                         <option value="1"> 中文 </option>
                     </select>
-                </td> </tr>
-                <tr> <td class="setting">
-                    <span> <a href="https://github.com/Ruan1337/Ruan1337.github.io">About</a> </span>
                 </td> </tr>
             </table>
         </div>

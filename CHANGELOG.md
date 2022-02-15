@@ -3,6 +3,14 @@ Changelog 变更记录
 All changes to this project will be listed here.
 对这个项目的所有变更都会在这里记录.
 
+4.1.4 - 2022-02-15
+----------
+Changed 变更
+- fixed a few minor bugs
+- improved checking efficiency of live schemes 
+- 修正一些小错误
+- 提升动态配色的检测效率
+
 4.1.3 - 2022-02-14
 ----------
 Added 添加

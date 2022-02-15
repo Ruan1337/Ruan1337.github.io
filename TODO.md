@@ -10,6 +10,7 @@ To-do functions and issues are listed here.
 4.1 - 2022-02-13
 ----------
 - infinite sessions  
+- add a "function button" (i.e. spacebar) at the bottom or the left side of the interface
 - change session name [done on 4.1.2]  
 - delete single solve [done on 4.1.2]  
 - click on a single solve to get detailed information [done on 4.1.2]  
@@ -19,6 +20,7 @@ To-do functions and issues are listed here.
 - click on session mean to get information [done on 4.1.3]  
   
 - 无限分组  
+- 在界面下方或左侧加"功能按键" (即空格)
 - 改变分组名称 [4.1.2 完成]  
 - 删除单次打乱 [4.1.2 完成]  
 - 点击单次成绩获取详细信息 [4.1.2 完成]  
@@ -30,5 +32,4 @@ To-do functions and issues are listed here.
 Further
 ----------
 - beautify the interface  
-  
 - 美化界面
