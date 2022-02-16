@@ -27,11 +27,13 @@ function readLocalStorage() {
     if (localStorage.getItem("language")) language = Number(localStorage.getItem("language"));
 
     if (localStorage.getItem("sessionName")) sessionName = JSON.parse(localStorage.getItem("sessionName"));
+    if (localStorage.getItem("maxSessionIndex")) maxSessionIndex = Number(localStorage.getItem("maxSessionIndex"));
     if (localStorage.getItem("resultSession")) resultSession = Number(localStorage.getItem("resultSession"));
     if (localStorage.getItem("resultSolves")) resultSolves = JSON.parse(localStorage.getItem("resultSolves"));
     if (localStorage.getItem("resultArray")) resultArray = JSON.parse(localStorage.getItem("resultArray"));
     if (localStorage.getItem("averageNumber")) averageNumber = JSON.parse(localStorage.getItem("averageNumber"));
     if (localStorage.getItem("averageType")) averageType = JSON.parse(localStorage.getItem("averageType"));
+    appendSession();
     clearResult();
     reloadResult();
 

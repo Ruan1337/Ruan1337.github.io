@@ -1,4 +1,5 @@
 if (localStorage.getItem("secondRun")) {
+    appendSession();
     readLocalStorage();
     startUpSetting();
     setLanguage(false, language);

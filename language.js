@@ -1,7 +1,7 @@
 let language = 0; // 0 english, 1 chinese 2?
 let buttonLanguageList = [
-    ["Customize", "Scramble", "Solve", "Confirm solve", "Next puzzle", "Settings", "Puzzle", "Export state", "Previous puzzle", "Result", "Clear session", "Rename"],
-    ["自定义", "打乱", "自动复原", "确认复原", "下一个", "设置", "方块", "导出状态", "上一个", "成绩", "清空分组", "重命名"]
+    ["Customize", "Scramble", "Solve", "Confirm solve", "Next puzzle", "Settings", "Puzzle", "Export state", "Previous puzzle", "Result", "Clear session", "Rename", "New", "Delete"],
+    ["自定义", "打乱", "自动复原", "确认复原", "下一个", "设置", "方块", "导出状态", "上一个", "成绩", "清空分组", "重命名", "新建", "删除"]
 ];
 let settingsTitleList = [
     ["Puzzle", "Appearance", "Statistics", "Color scheme", "Controls", "Timer", "General", "Session"],
@@ -53,14 +53,16 @@ let customizeHintList = [
     "Input puzzle contains unequal pieces per row/column!", "Input puzzle should contain at least 2 rows and 2 columns!",
     "Input puzzle is too big!", "Input puzzle is solved!", "Input puzzle contains duplicate numbers!",
     "Some numbers are too big!", "Input puzzle is not solvable. Continue with this input?",
-    "Clear this session?"],
+    "Clear this session?", "Enter a name for new session", "Delete session?\nYou cannot undo this!", 
+    "You can't delete your only session."],
 
     ["请输入一个十进制打乱, 用0代表空格. 例如1 2 3 4/5 6 7 8/9 10 11 12/0 13 14 15",
     "打乱含有其他字符, 请确保打乱只含有数字, 空格和斜杠.",
     "每行/每列的块数不相等!", "打乱应当至少有2行2列!",
     "打乱太大!", "请不要输入复原态!", "打乱含有重复数字!",
     "部分数字太大了!", "该打乱不可解, 要继续吗?",
-    "确定清除该分组?"]
+    "确定清除该分组?", "输入新分组名称:", "删除该分组?\n该操作不可撤销!", 
+    "不能删除仅有的分组."]
 ];
 let timerUpdateList = [
     ["real time", "to 0.1s", "to seconds", "do not display"],
@@ -94,6 +96,8 @@ function setLanguage(systemDefault, languageValue) {
     document.querySelector('#resultBtn').value = buttonLanguageList[language][9];
     document.querySelector('#clrSession').value = buttonLanguageList[language][10];
     document.querySelector('#renameSession').value = buttonLanguageList[language][11];
+    document.querySelector('#newSession').value = buttonLanguageList[language][12];
+    document.querySelector('#deleteSession').value = buttonLanguageList[language][13];
 
     document.querySelector("#statusBar").textContent = infoBarList[language][2] + "0" + infoBarList[language][3] + "0" + infoBarList[language][4] + "0";
 
@@ -179,12 +183,12 @@ function setLanguage(systemDefault, languageValue) {
     document.querySelector('#about').innerHTML = settingsLanguageList[language][28];
     setDefaultSelected("language", language);
 
-    let tempSessionId;
+    /*let tempSessionId;
     for (let i = 1; i < 16; i ++) {
-        if (sessionName[i]) {
+        if (sessionName[i] && document.querySelector(tempSessionId)) {
             tempSessionId = "#session" + i;
             document.querySelector(tempSessionId).innerHTML = sessionName[i];
         }
-    }
+    } */
     reloadResult();
 }

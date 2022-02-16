@@ -3,6 +3,14 @@ Changelog 变更记录
 All changes to this project will be listed here.
 对这个项目的所有变更都会在这里记录.
 
+4.1.5 - 2022-02-16
+----------
+Added 添加
+- add sessions
+- delete sessions
+- 添加分组
+- 删除分组
+
 4.1.4 - 2022-02-15
 ----------
 Changed 变更

@@ -1,5 +1,5 @@
 let resultSolves = [], sessionSolves = 0, resultSession = 1, finishedSolves = 0;
-let resultArray = [], sessionName = ["0", "1"];
+let resultArray = [], sessionName = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"], maxSessionIndex = 15;
 let averageNumber = [5, 12], averageType = [1, 1], averageTitleString = ["Mo", "Ao", "", "<br>"];
 let timeAo = movesAo = tpsAo = 0, maxIndex = [0, 0, 0], minIndex = [0, 0, 0];
 let sessionStatSum = [0, 0, 0];
@@ -28,11 +28,66 @@ function setSessionName() {
     if (tempSessionName) {
         sessionName[resultSession] = tempSessionName;
         let tempSessionId = "#session" + resultSession;
-        document.querySelector(tempSessionId).innerHTML = tempSessionName
+        document.querySelector(tempSessionId).innerHTML = tempSessionName;
         localStorage.setItem("sessionName", JSON.stringify(sessionName));
+        localStoreTable();
     } else {
         return false;
     }
+}
+
+function appendSession() {
+    if (localStorage.getItem("tableHtml")) {
+        document.querySelector('#resultSession').innerHTML = localStorage.getItem("tableHtml");
+    }
+}
+
+function newSession() {
+    let newSessionName = prompt(customizeHintList[language][10]);
+    if (newSessionName) {
+        maxSessionIndex ++;
+        resultSession = maxSessionIndex;
+        let newOption = new Option(newSessionName, maxSessionIndex);
+        newOption.id = ("session" + maxSessionIndex);
+        document.querySelector("#resultSession").appendChild(newOption);
+        sessionName[maxSessionIndex] = newSessionName;
+        resultArray[resultSession] = [];
+        resultSolves[resultSession] = 0;
+        sessionSolves = 0;
+        finishedSolves = 0;
+        document.querySelector('#sessionStats').innerHTML = infoBarList[language][7] + finishedSolves + "/" + sessionSolves + "): " + infoBarList[language][2] + 0 + infoBarList[language][3] + 0 + infoBarList[language][4] + 0;
+        localStorage.setItem("maxSessionIndex", maxSessionIndex);
+        localStorage.setItem("resultSolves", JSON.stringify(resultSolves));
+        localStorage.setItem("resultArray", JSON.stringify(resultArray));
+        localStorage.setItem("sessionName", JSON.stringify(sessionName));
+        // kill this; use length instead
+        localStoreTable();
+    } else {
+        return false;
+    }
+}
+
+function deleteSession() {
+    if (confirm(customizeHintList[language][11])) {
+        if (document.querySelector('#resultSession').options.length == 1) {
+            alert(customizeHintList[language][12]);
+            return false;
+        } else {
+            let tempTable = document.querySelector('#resultSession');
+            resultArray[resultSession] = [];
+            tempTable.removeChild(tempTable.options[tempTable.options.selectedIndex]);
+            resultSession = tempTable.options[tempTable.options.selectedIndex].value;
+            localStorage.setItem("resultSession", resultSession);
+            localStorage.setItem("resultArray", JSON.stringify(resultArray));
+            localStoreTable();
+            reloadResult();
+        }
+    }
+}
+
+function localStoreTable() {
+    let tableHtml = document.querySelector('#resultSession').innerHTML;
+    localStorage.setItem("tableHtml", tableHtml);
 }
 
 function getDetails() {
