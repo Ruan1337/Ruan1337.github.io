@@ -25,7 +25,7 @@ let useMinutes = 1, useHours = 0, timerAccuracy = 1000, updateFreq = 60, interva
 let puzzleTextColor = "#FFFFFF", puzzleTextRatio = 0.66, puzzleSize = 620, puzzleMargin = 2, puzzleRadiusFactor = 0, puzzleBorder = false, drawPuzzleOffset = 0;
 let onMainPage = true;
 let puzzleCanvas = document.querySelector("#puzzleCanvas"), spacebarCanvas = document.querySelector("#spacebarCanvas");
-let ctx = puzzleCanvas.getContext("2d"), ctxSpace = spacebarCanvas.getContext("2d");
+let ctx = puzzleCanvas.getContext("2d"), ctxSpace = spacebarCanvas.getContext("2d"), disableFunctionButton = false;
 let randPieceZ;
 let scrambleString = "", relayProgress;
 ctx.lineWidth = 1, ctxSpace.lineWidth = 3;
@@ -118,7 +118,7 @@ function drawSpacebarCanvas() {
     } else if (bld && !(multibld) && bldIsConfirmed == 0) {
         ctxSpace.fillText(buttonLanguageList[language][3], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
     }
-    if (!(onMainPage)) spacebarCanvas.style.visibility = 'hidden';
+    if (!(onMainPage) || disableFunctionButton) spacebarCanvas.style.visibility = 'hidden';
 }
 
 function functionButtonPressed() {
@@ -1598,7 +1598,8 @@ function setPage(x){
     sbtn.style.visibility = 'visible';
     if (x == 0) {
         bbtn.style.visibility = 'hidden';
-        spacebarCanvas.style.visibility = 'visible';
+        if (!(disableFunctionButton))
+            spacebarCanvas.style.visibility = 'visible';
     }
     else {
         spacebarCanvas.style.visibility = 'hidden';

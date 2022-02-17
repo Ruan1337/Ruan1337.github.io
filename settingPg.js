@@ -20,6 +20,7 @@ function readLocalStorage() {
     if (localStorage.getItem("colorLive3")) colorLive[3] = localStorage.getItem("colorLive3");
     if (localStorage.getItem("invertControl")) invertControl = Number(localStorage.getItem("invertControl"));
     if (localStorage.getItem("hoverOn")) hoverOn = (localStorage.getItem("hoverOn") == "true");
+    if (localStorage.getItem("disableFunctionButton")) disableFunctionButton = (localStorage.getItem("disableFunctionButton") == "true");
     if (localStorage.getItem("timerAccuracy")) timerAccuracy = Number(localStorage.getItem("timerAccuracy"));
     if (localStorage.getItem("useMinutes")) useMinutes = (localStorage.getItem("useMinutes") == "true");
     if (localStorage.getItem("useHours")) useHours = (localStorage.getItem("useHours") == "true");
@@ -75,6 +76,7 @@ function startUpSetting() {
 
     document.querySelector("#invertControl").checked = invertControl;
     document.querySelector("#hoverControl").checked = hoverOn;
+    document.querySelector("#functionButtonControl").checked = disableFunctionButton;
     setDefaultSelected("accuracy", timerAccuracy);
     setDefaultSelected("minutes", useMinutes + useHours);
     setDefaultSelected("freq", updateFreq);
@@ -326,6 +328,11 @@ function invertControlFunction() {
 function hoverControlFunction() {
     hoverOn = !(hoverOn);
     localStorage.setItem("hoverOn", hoverOn);
+}
+
+function disableFunctionButtonFunction() {
+    disableFunctionButton = !(disableFunctionButton);
+    localStorage.setItem("disableFunctionButton", disableFunctionButton);
 }
 
 function accuracyChange(x) {
