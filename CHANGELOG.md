@@ -3,6 +3,16 @@ Changelog 变更记录
 All changes to this project will be listed here.
 对这个项目的所有变更都会在这里记录.
 
+4.1.6 - 2022-02-17
+----------
+Added 添加
+- function button (works as spacebar) for touchscreen
+- 为触屏 (功能同空格) 添加的功能键
+
+Changed 变更
+- puzzle center aligned for inequal puzzles
+- 不等阶横向居中显示
+
 4.1.5 - 2022-02-16
 ----------
 Added 添加

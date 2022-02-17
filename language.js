@@ -183,12 +183,6 @@ function setLanguage(systemDefault, languageValue) {
     document.querySelector('#about').innerHTML = settingsLanguageList[language][28];
     setDefaultSelected("language", language);
 
-    /*let tempSessionId;
-    for (let i = 1; i < 16; i ++) {
-        if (sessionName[i] && document.querySelector(tempSessionId)) {
-            tempSessionId = "#session" + i;
-            document.querySelector(tempSessionId).innerHTML = sessionName[i];
-        }
-    } */
+    drawSpacebarCanvas();
     reloadResult();
 }

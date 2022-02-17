@@ -22,16 +22,18 @@ let relayStartCols = cols, relayStartRows = rows;
 let unsolved = false, solveInProgress = false;
 let startTime = memoFinishTime = currentTime = endTime = 0, timeString = "";
 let useMinutes = 1, useHours = 0, timerAccuracy = 1000, updateFreq = 60, intervalID;
-let puzzleTextColor = "#FFFFFF", puzzleTextRatio = 0.66, puzzleSize = 620, puzzleMargin = 2, puzzleRadiusFactor = 0, puzzleBorder = false;
+let puzzleTextColor = "#FFFFFF", puzzleTextRatio = 0.66, puzzleSize = 620, puzzleMargin = 2, puzzleRadiusFactor = 0, puzzleBorder = false, drawPuzzleOffset = 0;
 let onMainPage = true;
-let puzzleCanvas = document.querySelector("#puzzleCanvas");
-let ctx = puzzleCanvas.getContext("2d");
+let puzzleCanvas = document.querySelector("#puzzleCanvas"), spacebarCanvas = document.querySelector("#spacebarCanvas");
+let ctx = puzzleCanvas.getContext("2d"), ctxSpace = spacebarCanvas.getContext("2d");
 let randPieceZ;
 let scrambleString = "", relayProgress;
-ctx.lineWidth = 1;
+ctx.lineWidth = 1, ctxSpace.lineWidth = 3;
+ctxSpace.strokeStyle = "#888";
 
 function initWindow() {
     puzzleCanvas.width = puzzleCanvas.height = puzzleSize = Math.floor(Math.min(0.8 * window.innerHeight, 0.8 * window.innerWidth));
+    setLandscape();
     document.querySelector("#adjPuzzleSize").value = puzzleSize;
     document.querySelector("#adjPuzzleSizeSlider").value = puzzleSize;
     localStorage.setItem("puzzleSize", puzzleSize);
@@ -48,16 +50,21 @@ function mouse(e) {
     e.stopPropagation();
     if(e.type == "touchstart" || (e.type == "touchmove" && hoverOn) || e.type == "touchend" || e.type == "touchleave") {
         let bbox = puzzleCanvas.getBoundingClientRect();
-        let touch=e.touches[0];
+        let touch = e.touches[0];
         clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
     }
     return false;
 }
 
 window.onresize = function() {
+    setLandscape();
+}
+
+function setLandscape() {
     if (window.innerWidth < window.innerHeight) {
         if (landscape >= 1) {
             landscape = 0;
+            drawSpacebarCanvas();
             document.querySelector("#timeAo5").innerHTML = (averageBoxList[language][2] + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
             document.querySelector("#movesAo5").innerHTML = (averageBoxList[language][3] + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
             document.querySelector("#tpsAo5").innerHTML = ("TPS" + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
@@ -68,6 +75,7 @@ window.onresize = function() {
     } else {
         if (landscape == 0) {
             landscape = 1;
+            drawSpacebarCanvas();
             document.querySelector("#timeAo5").innerHTML = (averageBoxList[language][2] + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
             document.querySelector("#movesAo5").innerHTML = (averageBoxList[language][3] + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
             document.querySelector("#tpsAo5").innerHTML = ("TPS" + averageTitleString[3 - landscape] + averageTitleString[averageType[0]] + averageNumber[0]);
@@ -75,6 +83,57 @@ window.onresize = function() {
             document.querySelector("#movesAo12").innerHTML = (averageBoxList[language][3] + averageTitleString[3 - landscape] + averageTitleString[averageType[1]] + averageNumber[1]);
             document.querySelector("#tpsAo12").innerHTML = ("TPS" + averageTitleString[3 - landscape] + averageTitleString[averageType[1]] + averageNumber[1]);
         }
+    }
+}
+
+function drawSpacebarCanvas() {
+    if (landscape == 1) {
+        spacebarCanvas.style = "position: fixed; left: 0;";
+        spacebarCanvas.style.top = (0.1 * window.innerHeight) + "px";
+        spacebarCanvas.width = 0.1 * window.innerWidth;
+        spacebarCanvas.height = 0.8 * window.innerHeight;
+    } else {
+        spacebarCanvas.style = "position: fixed; bottom: 0;";
+        spacebarCanvas.style.left = (0.1 * window.innerWidth) + "px";
+        spacebarCanvas.width = 0.8 * window.innerWidth;
+        spacebarCanvas.height = 0.1 * window.innerHeight;
+    }
+    ctxSpace.strokeRect(0, 0, spacebarCanvas.width, spacebarCanvas.height);
+    if (language == 0) {
+        (landscape == 1) ? ctxSpace.font = (0.18 * spacebarCanvas.width) + "px sans-serif": ctxSpace.font = (0.6 * spacebarCanvas.height) + "px sans-serif";
+    } else {
+        (landscape == 1) ? ctxSpace.font = (0.23 * spacebarCanvas.width) + "px sans-serif": ctxSpace.font = (0.6 * spacebarCanvas.height) + "px sans-serif";
+    }
+    ctxSpace.fillStyle = "#888";
+    ctxSpace.textBaseline = "middle";
+    ctxSpace.textAlign = "center";
+    if (!(solveInProgress)) {
+        ctxSpace.fillText(buttonLanguageList[language][1], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
+    } else if (multibld) {
+        if (multibldProgress == (2 * multibldLength - 1)) {
+            ctxSpace.fillText(buttonLanguageList[language][3], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
+        } else if (multibldProgress < (3 * multibldLength - 1)) {
+            ctxSpace.fillText(buttonLanguageList[language][4], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
+        }
+    } else if (bld && !(multibld) && bldIsConfirmed == 0) {
+        ctxSpace.fillText(buttonLanguageList[language][3], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
+    }
+    if (!(onMainPage)) spacebarCanvas.style.visibility = 'hidden';
+}
+
+function functionButtonPressed() {
+    if (!(solveInProgress)) {
+        document.querySelector('#scrambleBtn').click();
+    } else if (bld && !(multibld) && bldIsConfirmed == 0) {
+        document.querySelector('#confirmBtn').click();
+    } else if (multibld) {
+        if (multibldProgress == (2 * multibldLength - 1)) {
+            document.querySelector('#confirmBtn').click();
+        } else if (multibldProgress < (3 * multibldLength - 1)) {
+            document.querySelector('#nextBtn').click();
+        }
+    } else {
+        document.querySelector('#scrambleBtn').click();
     }
 }
 
@@ -430,6 +489,7 @@ function prevPuzzle() {
 
 function copyPuzzle() {
     multibldProgress ++;
+    drawSpacebarCanvas();
     if (multibldProgress == 0) {
         memoTimer();
     }
@@ -508,6 +568,7 @@ function afterScramble() {
         solveInProgress = true;
         multibldFinishMemo = false;
         multibldInProgress = true;
+        drawSpacebarCanvas();
         startTimer();
         redraw();
     } else if (bld) {
@@ -661,6 +722,7 @@ function customizeScramble() {
     spaceY = Math.floor(spacePos / colLength);
     rows = rowLength;
     cols = colLength;
+    setDrawSize();
     for (let j = 0;j < rows;j++) {
         puzzle[j] = [];
         for (let i = 0;i < cols;i++) {
@@ -712,6 +774,7 @@ function checkNewSolve() {
         if (bld && bldInProgress) {
             bldIsConfirmed = 0;
             bldFinishMemo = true;
+            drawSpacebarCanvas();
             memoTimer();
         } else {
             startTimer();
@@ -896,10 +959,14 @@ function setStroke(j, i) {
     }
 }
 
-function redrawPuzzle() {
-    ctx.clearRect(0, 0, puzzleCanvas.width, puzzleCanvas.height);
+function setDrawSize() {
     puzzlePieceSize = Math.floor(Math.min((puzzleSize - (rows - 1) * puzzleMargin) / rows, (puzzleSize - (cols - 1) * puzzleMargin) / cols));
     puzzleTextSize = Math.floor(puzzleTextRatio * puzzlePieceSize);
+    (rows > cols) ? drawPuzzleOffset = Math.floor((rows - cols) * (puzzlePieceSize + puzzleMargin) / 2): drawPuzzleOffset = 0;
+}
+
+function redrawPuzzle() {
+    ctx.clearRect(0, 0, puzzleCanvas.width, puzzleCanvas.height);
     for (let i = 0;i < cols;i++) {
         for (let j = 0;j < rows;j++) {
             if (puzzle[j][i] != 0) {
@@ -918,19 +985,19 @@ function redrawPuzzle() {
                     }
                 }
                 if (puzzleRadiusFactor == 0) {
-                    ctx.fillRect((puzzlePieceSize + puzzleMargin) * i, (puzzlePieceSize + puzzleMargin) * j, puzzlePieceSize, puzzlePieceSize);
+                    ctx.fillRect((puzzlePieceSize + puzzleMargin) * i + drawPuzzleOffset, (puzzlePieceSize + puzzleMargin) * j, puzzlePieceSize, puzzlePieceSize);
                     if (puzzleBorder) {
-                        ctx.strokeRect((puzzlePieceSize + puzzleMargin) * i, (puzzlePieceSize + puzzleMargin) * j, puzzlePieceSize, puzzlePieceSize);
+                        ctx.strokeRect((puzzlePieceSize + puzzleMargin) * i + drawPuzzleOffset, (puzzlePieceSize + puzzleMargin) * j, puzzlePieceSize, puzzlePieceSize);
                     }
                 } else if (puzzleRadiusFactor == 0.5) {
                     let puzzleRadius = puzzlePieceSize * puzzleRadiusFactor;
                     ctx.beginPath();
-                    ctx.arc((puzzlePieceSize + puzzleMargin) * i + puzzlePieceSize / 2, (puzzlePieceSize + puzzleMargin) * j + puzzlePieceSize / 2, puzzleRadius, 0, 2 * Math.PI);
+                    ctx.arc((puzzlePieceSize + puzzleMargin) * i + puzzlePieceSize / 2 + drawPuzzleOffset, (puzzlePieceSize + puzzleMargin) * j + puzzlePieceSize / 2, puzzleRadius, 0, 2 * Math.PI);
                     ctx.fill();
                     if (puzzleBorder) {
                         ctx.strokeStyle = "#000";
                         ctx.beginPath();
-                        ctx.arc((puzzlePieceSize + puzzleMargin) * i + puzzlePieceSize / 2, (puzzlePieceSize + puzzleMargin) * j + puzzlePieceSize / 2, puzzleRadius, 0, 2 * Math.PI);
+                        ctx.arc((puzzlePieceSize + puzzleMargin) * i + puzzlePieceSize / 2 + drawPuzzleOffset, (puzzlePieceSize + puzzleMargin) * j + puzzlePieceSize / 2, puzzleRadius, 0, 2 * Math.PI);
                         ctx.stroke();
                     }
                 } else {
@@ -955,7 +1022,7 @@ function redrawPuzzle() {
         for (let i = 0;i < cols;i++) {
             for (let j = 0;j < rows;j++) {
                 if (puzzle[j][i] != 0) {
-                    ctx.fillText(numberBaseList[puzzle[j][i]], puzzlePieceSize * (i + 0.5) + puzzleMargin * i, puzzlePieceSize * (j + 0.5) + puzzleMargin * j);
+                    ctx.fillText(numberBaseList[puzzle[j][i]], puzzlePieceSize * (i + 0.5) + puzzleMargin * i + drawPuzzleOffset, puzzlePieceSize * (j + 0.5) + puzzleMargin * j);
                 }
             }
         }
@@ -964,14 +1031,14 @@ function redrawPuzzle() {
 
 function drawFilletRect(puzzleRadius, lineLength, pieceStartX, pieceStartY) {
     ctx.beginPath();
-    ctx.arc(pieceStartX + puzzleRadius, pieceStartY + puzzleRadius, puzzleRadius, Math.PI, Math.PI * 3 / 2);
-    ctx.lineTo(pieceStartX + puzzleRadius + lineLength, pieceStartY);
-    ctx.arc(pieceStartX + puzzleRadius + lineLength, pieceStartY + puzzleRadius, puzzleRadius, Math.PI * 3 / 2, 0);
-    ctx.lineTo(pieceStartX + puzzlePieceSize, pieceStartY + puzzleRadius + lineLength);
-    ctx.arc(pieceStartX + puzzleRadius + lineLength, pieceStartY + puzzleRadius + lineLength, puzzleRadius, 0, Math.PI / 2);
-    ctx.lineTo(pieceStartX + puzzleRadius, pieceStartY + puzzlePieceSize);
-    ctx.arc(pieceStartX + puzzleRadius, pieceStartY + puzzleRadius + lineLength, puzzleRadius, Math.PI / 2, Math.PI);
-    ctx.lineTo(pieceStartX, pieceStartY + puzzleRadius);
+    ctx.arc(pieceStartX + puzzleRadius + drawPuzzleOffset, pieceStartY + puzzleRadius, puzzleRadius, Math.PI, Math.PI * 3 / 2);
+    ctx.lineTo(pieceStartX + puzzleRadius + lineLength + drawPuzzleOffset, pieceStartY);
+    ctx.arc(pieceStartX + puzzleRadius + lineLength + drawPuzzleOffset, pieceStartY + puzzleRadius, puzzleRadius, Math.PI * 3 / 2, 0);
+    ctx.lineTo(pieceStartX + puzzlePieceSize + drawPuzzleOffset, pieceStartY + puzzleRadius + lineLength);
+    ctx.arc(pieceStartX + puzzleRadius + lineLength + drawPuzzleOffset, pieceStartY + puzzleRadius + lineLength, puzzleRadius, 0, Math.PI / 2);
+    ctx.lineTo(pieceStartX + puzzleRadius + drawPuzzleOffset, pieceStartY + puzzlePieceSize);
+    ctx.arc(pieceStartX + puzzleRadius + drawPuzzleOffset, pieceStartY + puzzleRadius + lineLength, puzzleRadius, Math.PI / 2, Math.PI);
+    ctx.lineTo(pieceStartX + drawPuzzleOffset, pieceStartY + puzzleRadius);
 }
 
 function redraw() {
@@ -1159,6 +1226,8 @@ document.onkeydown = function(event) {
                     } else if (multibldProgress < (3 * multibldLength - 1)) {
                         document.querySelector('#nextBtn').click();
                     }
+                } else {
+                    document.querySelector('#scrambleBtn').click();
                 }
             break;
             case(13):
@@ -1215,7 +1284,7 @@ function clickMove(canvasX, canvasY) {
     if ((canvasX <= puzzleSize) && (canvasY <= puzzleSize)) {
         let tempX = spaceX, tempY = spaceY;
         if ((canvasX % (puzzlePieceSize + puzzleMargin) <= puzzlePieceSize) && (canvasY % (puzzlePieceSize + puzzleMargin) <= puzzlePieceSize)) {
-            clickX = Math.floor(canvasX / (puzzlePieceSize + puzzleMargin));
+            clickX = Math.floor((canvasX - drawPuzzleOffset) / (puzzlePieceSize + puzzleMargin));
             clickY = Math.floor(canvasY / (puzzlePieceSize + puzzleMargin));
             if (multibld && !(multibldFinishMemo)) {
             } else if (clickX >= 0 && clickY >= 0 && clickX < cols && clickY < rows) {
@@ -1257,6 +1326,7 @@ function stopRelay() {
                 relayInProgress = false;
                 rows = relayStartRows;
                 cols = relayStartCols;
+                setDrawSize();
                 if (solveInProgress) {
                     stopTimer(true);
                 }
@@ -1274,6 +1344,7 @@ function stopRelay() {
                     stopTimer(true);
                 }
                 solveInProgress = false;
+                setDrawSize();
                 defineType();
                 genColor();
                 initPuzzle();
@@ -1283,17 +1354,20 @@ function stopRelay() {
             if (relayRowsChange || relayColsChange) {
                 if (relayRowsChange) {
                     rows--;
+                    setDrawSize();
                     defineType();
                     genColor();
                 }
                 if (relayColsChange) {
                     cols--;
+                    setDrawSize();
                     defineType();
                     genColor();
                 }
             } else {
                 if (cols > 2) {
                     cols--;
+                    setDrawSize();
                     defineType();
                     genColor();
                 } else if (rows == 2) {
@@ -1304,12 +1378,14 @@ function stopRelay() {
                     solveInProgress = false;
                     rows = relayStartRows;
                     cols = relayStartCols;
+                    setDrawSize();
                     defineType();
                     genColor();
                     initPuzzle();
                 } else {
                     rows--;
                     cols = relayStartCols;
+                    setDrawSize();
                     defineType();
                     genColor();
                 }
@@ -1376,6 +1452,7 @@ function bldConfirm() {
     }
     unsolved ? bldIsConfirmed = -1 : bldIsConfirmed = 1;
     solveInProgress = false;
+    drawSpacebarCanvas();
     stopTimer(true);
 }
 
@@ -1398,6 +1475,7 @@ function startTimer() {
 }
 
 function memoTimer() {
+    drawFilletRect();
     let d = new Date();
     memoFinishTime = d.getTime();
     redraw();
@@ -1518,12 +1596,16 @@ function setPage(x){
     bbtn.style.visibility = 'visible';
     rbtn.style.visibility = 'visible';
     sbtn.style.visibility = 'visible';
-    if (x == 0)
+    if (x == 0) {
         bbtn.style.visibility = 'hidden';
-    else if (x == 1)
-        rbtn.style.visibility = 'hidden';
-    else
-        sbtn.style.visibility = 'hidden';
-
+        spacebarCanvas.style.visibility = 'visible';
+    }
+    else {
+        spacebarCanvas.style.visibility = 'hidden';
+        if (x == 1)
+            rbtn.style.visibility = 'hidden';
+        else
+            sbtn.style.visibility = 'hidden';
+    }
     onMainPage = (x == 0);
 }

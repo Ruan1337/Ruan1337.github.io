@@ -14,6 +14,8 @@ if (localStorage.getItem("secondRun")) {
     defineType();
     resetTimer();
 }
+setDrawSize();
+drawSpacebarCanvas();
 startUpInitPuzzle();
 initPuzzle();
 redraw();

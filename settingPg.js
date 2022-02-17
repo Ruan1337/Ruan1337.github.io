@@ -85,6 +85,7 @@ function startUpSetting() {
     document.querySelector("#adjAverageNumber2").value = averageNumber[1];
     setDefaultSelected("adjAverageType1", averageType[0]);
     setDefaultSelected("adjAverageType2", averageType[1]);
+    setLandscape();
 }
 
 function puzzleSizeOnChange(slider) {
@@ -110,6 +111,7 @@ function puzzleSizeOnChange(slider) {
     }
     cols = numInputCols;
     rows = numInputRows;
+    setDrawSize();
     document.querySelector("#adjWidth").value = cols;
     document.querySelector("#adjHeight").value = rows;
     document.querySelector("#adjWidthSlider").value = cols;
@@ -138,6 +140,7 @@ function setPuzzleOnSizeChange() {
     document.querySelector("#adjHeight").value = rows;
     localStorage.setItem("cols", cols);
     localStorage.setItem("rows", rows);
+    setDrawSize();
     defineType();
     genColor();
     initPuzzle();
@@ -343,7 +346,7 @@ function setMinutes(x) {
 }
 
 function setDefaultSelected(selectId, checkValue) {
-    let select = document.getElementById(selectId); 
+    let select = document.getElementById(selectId);
     for (i = 0;i < select.options.length;i++){ 
         if (select.options[i].value == checkValue){ 
             select.options[i].selected = true; 

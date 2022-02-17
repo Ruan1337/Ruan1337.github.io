@@ -23,7 +23,7 @@
                 <div id="operRow" style="text-align: center;">
                     <input id="customizeBtn" type="button" value="Customize" onclick="customizeScramble();">
                     <input id="scrambleBtn" type="button" value="Scramble" onclick="initPuzzle(); beforeScramble(); scramble(); afterScramble();">
-                    <input id="solveBtn" type="button" value="Solve" onclick="initPuzzle(); resetTimer(); controlCustomizeBtn(); redraw();">
+                    <input id="solveBtn" type="button" value="Solve" onclick="initPuzzle(); resetTimer(); controlCustomizeBtn(); redraw(); drawSpacebarCanvas();">
                     <input id="confirmBtn" type="button" style="visibility: hidden;" value="Confirm solve" onclick="bldConfirm(); controlCustomizeBtn(); redraw();">
                     <input id="prevBtn" type="button" style="visibility: hidden;" value="Previous puzzle" onclick="prevPuzzle();">
                     <input id="nextBtn" type="button" style="visibility: hidden;" value="Next puzzle" onclick="copyPuzzle();"> <!-- scramble +1; if the last, change value and start solving -->
@@ -39,6 +39,12 @@
         </div>
         <div class="pg" id="resultPg" style="display: none;">
             <div style="text-align: center;">
+                <span>
+                    <input id="newSession" type="button" value="New" onclick="newSession();">
+                </span>
+                <span>
+                    <input id="deleteSession" type="button" value="Delete" onclick="deleteSession();">
+                </span>
                 <span id="resultSessionLabel"> Session </span> 
                 <span> <select class="selectBox" id="resultSession" onchange="sessionChange(this.options[this.options.selectedIndex].value);">
                     <option id="session1" value="1"> 1 </option>
@@ -306,7 +312,9 @@
                 </td> </tr>
             </table>
         </div>
-
+        <div>
+            <canvas style="position: fixed; bottom: 0; text-align: center;" id="spacebarCanvas" width="620" height="124" onclick="functionButtonPressed();"> Your browser does not support canvas! </canvas>
+        </div>
         <script type="text/javascript" src="language.js"></script>
         <script type="text/javascript" src="mainPg.js"></script>
         <script type="text/javascript" src="resultPg.js"></script>
