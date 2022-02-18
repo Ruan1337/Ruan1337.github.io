@@ -154,6 +154,8 @@ spacebarCanvas.onmouseup = function(e) {
 }
 
 function touchFunction(e) {
+    e.preventDefault();
+    e.stopPropagation();
     let touch = e.touches[0];
     functionButtonPressed((parseInt(touch.pageX) - box2.left) * (spacebarCanvas.width / box2.width), (parseInt(touch.pageY) - box2.top) * (spacebarCanvas.height / box2.height));
 }
