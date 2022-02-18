@@ -28,8 +28,8 @@ let puzzleCanvas = document.querySelector("#puzzleCanvas"), spacebarCanvas = doc
 let ctx = puzzleCanvas.getContext("2d"), ctxSpace = spacebarCanvas.getContext("2d"), disableFunctionButton = false;
 let randPieceZ;
 let scrambleString = "", relayProgress;
+let bbox = puzzleCanvas.getBoundingClientRect(), box2 = spacebarCanvas.getBoundingClientRect();
 ctx.lineWidth = 1, ctxSpace.lineWidth = 3;
-ctxSpace.strokeStyle = "#888";
 
 function initWindow() {
     puzzleCanvas.width = puzzleCanvas.height = puzzleSize = Math.floor(Math.min(0.8 * window.innerHeight, 0.8 * window.innerWidth));
@@ -43,13 +43,13 @@ function initTouch() {
     puzzleCanvas.addEventListener('touchstart', mouse, false);
     puzzleCanvas.addEventListener('touchend', mouse, false);
     puzzleCanvas.addEventListener('touchmove', mouse, false);
+    spacebarCanvas.addEventListener('touchstart', touchFunction, false);
 }
 
 function mouse(e) {
     e.preventDefault();
     e.stopPropagation();
     if(e.type == "touchstart" || (e.type == "touchmove" && hoverOn) || e.type == "touchend" || e.type == "touchleave") {
-        let bbox = puzzleCanvas.getBoundingClientRect();
         let touch = e.touches[0];
         clickMove((parseInt(touch.pageX) - bbox.left) * (puzzleCanvas.width / bbox.width), (parseInt(touch.pageY) - bbox.top) * (puzzleCanvas.height / bbox.height));
     }
@@ -87,6 +87,8 @@ function setLandscape() {
 }
 
 function drawSpacebarCanvas() {
+    ctxSpace.strokeStyle = "#888";
+    ctxSpace.fillStyle = "#888";
     if (landscape == 1) {
         spacebarCanvas.style = "position: fixed; left: 0;";
         spacebarCanvas.style.top = (0.1 * window.innerHeight) + "px";
@@ -104,16 +106,36 @@ function drawSpacebarCanvas() {
     } else {
         (landscape == 1) ? ctxSpace.font = (0.23 * spacebarCanvas.width) + "px sans-serif": ctxSpace.font = (0.6 * spacebarCanvas.height) + "px sans-serif";
     }
-    ctxSpace.fillStyle = "#888";
     ctxSpace.textBaseline = "middle";
     ctxSpace.textAlign = "center";
     if (!(solveInProgress)) {
         ctxSpace.fillText(buttonLanguageList[language][1], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
     } else if (multibld) {
-        if (multibldProgress == (2 * multibldLength - 1)) {
-            ctxSpace.fillText(buttonLanguageList[language][3], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
-        } else if (multibldProgress < (3 * multibldLength - 1)) {
-            ctxSpace.fillText(buttonLanguageList[language][4], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
+        if (multibldProgress % multibldLength == 0) {
+            ctxSpace.fillText(functionButtonList[language][0], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
+        } else {
+            ctxSpace.beginPath();
+            if (landscape) {
+                ctxSpace.moveTo(0, spacebarCanvas.height / 2);
+                ctxSpace.lineTo(spacebarCanvas.width, spacebarCanvas.height / 2);
+                ctxSpace.fillText(functionButtonList[language][1], spacebarCanvas.width / 2, spacebarCanvas.height / 4);
+            } else {
+                ctxSpace.moveTo(spacebarCanvas.width / 2, 0);
+                ctxSpace.lineTo(spacebarCanvas.width / 2, spacebarCanvas.height);
+                ctxSpace.fillText(functionButtonList[language][1], spacebarCanvas.width / 4, spacebarCanvas.height / 2);
+            }
+            ctxSpace.stroke();
+            if (multibldProgress == (2 * multibldLength - 1)) {
+                if (landscape)
+                    ctxSpace.fillText(functionButtonList[language][2], spacebarCanvas.width / 2, spacebarCanvas.height * 3 / 4);
+                else
+                    ctxSpace.fillText(functionButtonList[language][2], spacebarCanvas.width * 3 / 4, spacebarCanvas.height / 2);
+            } else {
+                if (landscape)
+                    ctxSpace.fillText(functionButtonList[language][0], spacebarCanvas.width / 2, spacebarCanvas.height * 3 / 4);
+                else
+                    ctxSpace.fillText(functionButtonList[language][0], spacebarCanvas.width * 3 / 4, spacebarCanvas.height / 2);
+            }
         }
     } else if (bld && !(multibld) && bldIsConfirmed == 0) {
         ctxSpace.fillText(buttonLanguageList[language][3], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
@@ -121,16 +143,38 @@ function drawSpacebarCanvas() {
     if (!(onMainPage) || disableFunctionButton) spacebarCanvas.style.visibility = 'hidden';
 }
 
-function functionButtonPressed() {
+spacebarCanvas.onmousedown = function(e) {
+    let location = getLocationOnCanvas(e.clientX, e.clientY);
+    functionButtonPressed(location.x, location.y);
+}
+
+spacebarCanvas.onmouseup = function(e) {
+    e.preventDefault();
+    e.stopPropagation();
+}
+
+function touchFunction(e) {
+    let touch = e.touches[0];
+    functionButtonPressed((parseInt(touch.pageX) - box2.left) * (spacebarCanvas.width / box2.width), (parseInt(touch.pageY) - box2.top) * (spacebarCanvas.height / box2.height));
+}
+
+function functionButtonPressed(tempX, tempY) {
     if (!(solveInProgress)) {
         document.querySelector('#scrambleBtn').click();
     } else if (bld && !(multibld) && bldIsConfirmed == 0) {
         document.querySelector('#confirmBtn').click();
     } else if (multibld) {
-        if (multibldProgress == (2 * multibldLength - 1)) {
-            document.querySelector('#confirmBtn').click();
-        } else if (multibldProgress < (3 * multibldLength - 1)) {
+        if ((multibldProgress % multibldLength) == 0) {
             document.querySelector('#nextBtn').click();
+        } else {
+            if ((landscape && tempY < spacebarCanvas.height / 2) || (landscape == 0 && tempX < spacebarCanvas.width / 2)) {
+                document.querySelector('#prevBtn').click();
+            } else {
+                if (multibldProgress == (2 * multibldLength - 1))
+                    document.querySelector('#confirmBtn').click();
+                else
+                    document.querySelector('#nextBtn').click();
+            }
         }
     } else {
         document.querySelector('#scrambleBtn').click();
@@ -471,6 +515,7 @@ function genPuzzle() {
 
 function prevPuzzle() {
     multibldProgress --;
+    drawSpacebarCanvas();
     if (multibldProgress % multibldLength == 0) {
         document.querySelector('#prevBtn').style.visibility = 'hidden';
     } else {
@@ -1203,15 +1248,23 @@ document.onkeydown = function(event) {
         switch(e.keyCode) {
             // L U R D;D K F J
             case(37): case(68):
+                if (multibld && (multibldProgress < multibldLength)) {
+                } else
                 move(2 * invertControl);
             break;
             case(38): case(75):
+                if (multibld && (multibldProgress < multibldLength)) {
+                } else
                 move(1 + 2 * invertControl);
             break;
             case(39): case(70):
+                if (multibld && (multibldProgress < multibldLength)) {
+                } else
                 move(2 - 2 * invertControl);
             break;
             case(40): case(74):
+                if (multibld && (multibldProgress < multibldLength)) {
+                } else
                 move(3 - 2 * invertControl);
             break;
             case(32):
@@ -1223,7 +1276,7 @@ document.onkeydown = function(event) {
                 } else if (multibld) {
                     if (multibldProgress == (2 * multibldLength - 1)) {
                         document.querySelector('#confirmBtn').click();
-                    } else if (multibldProgress < (3 * multibldLength - 1)) {
+                    } else {
                         document.querySelector('#nextBtn').click();
                     }
                 } else {
