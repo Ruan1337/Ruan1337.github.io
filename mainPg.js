@@ -144,7 +144,7 @@ function drawSpacebarCanvas() {
 }
 
 spacebarCanvas.onmousedown = function(e) {
-    let location = getLocationOnCanvas(e.clientX, e.clientY);
+    let location = getLocationOnSpacebar(e.clientX, e.clientY);
     functionButtonPressed(location.x, location.y);
 }
 
@@ -1327,10 +1327,18 @@ document.onkeydown = function(event) {
 }
 
 function getLocationOnCanvas(x, y) {
-    let bbox = puzzleCanvas.getBoundingClientRect();
+    bbox = puzzleCanvas.getBoundingClientRect();
     return {
         x: (x - bbox.left) * (puzzleCanvas.width / bbox.width),
         y: (y - bbox.top) * (puzzleCanvas.height / bbox.height)
+    }
+}
+
+function getLocationOnSpacebar(x, y) {
+    box2 = spacebarCanvas.getBoundingClientRect();
+    return {
+        x: (x - box2.left) * (spacebarCanvas.width / box2.width),
+        y: (y - box2.top) * (spacebarCanvas.height / box2.height)
     }
 }
 
