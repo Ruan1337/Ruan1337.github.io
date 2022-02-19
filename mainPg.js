@@ -123,6 +123,7 @@ function drawSpacebarCanvas() {
 
 function functionButtonPressed() {
     if (!(solveInProgress)) {
+        document.querySelector('#solveBtn').click();
         document.querySelector('#scrambleBtn').click();
     } else if (bld && !(multibld) && bldIsConfirmed == 0) {
         document.querySelector('#confirmBtn').click();
