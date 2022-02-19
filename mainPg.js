@@ -581,6 +581,10 @@ function afterScramble() {
         moves = 0;
         startTimer();
         redraw();
+    } else if (marathon && solvesDone == 0) {
+        newSolve = true;
+    } else if (relay && cols == relayStartCols && rows == relayStartRows) {
+        newSolve = true;
     }
     if (!(useRainbow)) {
         liveIndex = 0;
