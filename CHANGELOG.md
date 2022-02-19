@@ -13,9 +13,11 @@ Changed 变更
 - puzzle center aligned for inequal puzzles
 - fixed keyboard control while multibld inspection
 - fixed timer doesn't start in relay when scrambled for multiple times
+- fixed scramble output
 - 不等阶横向居中显示
 - 修复多盲观察时键盘操作
 - 修复连拧下多次打乱计时器不启动
+- 修复打乱输出
 
 4.1.5 - 2022-02-16
 ----------

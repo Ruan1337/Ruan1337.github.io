@@ -123,7 +123,6 @@ function drawSpacebarCanvas() {
 
 function functionButtonPressed() {
     if (!(solveInProgress)) {
-        document.querySelector('#solveBtn').click();
         document.querySelector('#scrambleBtn').click();
     } else if (bld && !(multibld) && bldIsConfirmed == 0) {
         document.querySelector('#confirmBtn').click();
@@ -402,14 +401,14 @@ function beforeScramble() {
     if (!(marathonInProgress || relayInProgress || multibldInProgress)) {
         newSolve = true;
     }
-    if (relay && !(relayInProgress)) {
+    if (relay && rows == relayStartRows && cols == relayStartCols) {
         scrambleString += ("#1: ");
         relayProgress = 0;
         relayStartCols = cols;
         relayStartRows = rows;
         relayInProgress = true;
     }
-    if (marathon && !(marathonInProgress)) {
+    if (marathon && solvesDone == 0) {
         scrambleString += ("#1: ");
         solvesDone = 0;
         marathonInProgress = true;
@@ -1419,7 +1418,8 @@ function stopMarathon() {
     if (marathon) {
         if (solvesDone < marathonLength) {
             solvesDone++;
-            scrambleString += (" #" + (solvesDone + 1) + ": ");
+            if (solvesDone < marathonLength)
+                scrambleString += (" #" + (solvesDone + 1) + ": ");
         }
         if (solvesDone == marathonLength) {
             marathonInProgress = false;
