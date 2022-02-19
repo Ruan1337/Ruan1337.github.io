@@ -1,6 +1,8 @@
 function readLocalStorage() {
     if (localStorage.getItem("cols")) cols = Number(localStorage.getItem("cols"));
     if (localStorage.getItem("rows")) rows = Number(localStorage.getItem("rows"));
+    relayStartCols = cols;
+    relayStartRows = rows;
     if (localStorage.getItem("puzzleSize")) {
         puzzleCanvas.width = puzzleCanvas.height = puzzleSize = Number(localStorage.getItem("puzzleSize"));
     }
@@ -140,6 +142,8 @@ function pxSizeOnChange(slider) {
 function setPuzzleOnSizeChange() {
     document.querySelector("#adjWidth").value = cols;
     document.querySelector("#adjHeight").value = rows;
+    relayStartCols = cols;
+    relayStartRows = rows;
     localStorage.setItem("cols", cols);
     localStorage.setItem("rows", rows);
     setDrawSize();
