@@ -1203,16 +1203,24 @@ document.onkeydown = function(event) {
         switch(e.keyCode) {
             // L U R D;D K F J
             case(37): case(68):
-                move(2 * invertControl);
+                if (solveInProgress && multibld && multibldProgress < multibldLength) {
+                } else
+                    move(2 * invertControl);
             break;
             case(38): case(75):
-                move(1 + 2 * invertControl);
+                if (solveInProgress && multibld && multibldProgress < multibldLength) {
+                } else
+                    move(1 + 2 * invertControl);
             break;
             case(39): case(70):
-                move(2 - 2 * invertControl);
+                if (solveInProgress && multibld && multibldProgress < multibldLength) {
+                } else
+                    move(2 - 2 * invertControl);
             break;
             case(40): case(74):
-                move(3 - 2 * invertControl);
+                if (solveInProgress && multibld && multibldProgress < multibldLength) {
+                } else
+                    move(3 - 2 * invertControl);
             break;
             case(32):
                 event.preventDefault();

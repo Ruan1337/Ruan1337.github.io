@@ -3,7 +3,7 @@ Changelog 变更记录
 All changes to this project will be listed here.
 对这个项目的所有变更都会在这里记录.
 
-4.1.6 - 2022-02-17
+4.1.6 - 2022-02-19
 ----------
 Added 添加
 - function button (works as spacebar) for touchscreen
@@ -11,7 +11,9 @@ Added 添加
 
 Changed 变更
 - puzzle center aligned for inequal puzzles
+- fixed keyboard control while multibld inspection
 - 不等阶横向居中显示
+- 修复多盲观察时键盘操作
 
 4.1.5 - 2022-02-16
 ----------
