@@ -3,10 +3,6 @@ let buttonLanguageList = [
     ["Customize", "Scramble", "Solve", "Confirm solve", "Next puzzle", "Settings", "Puzzle", "Export state", "Previous puzzle", "Result", "Clear session", "Rename", "New", "Delete"],
     ["自定义", "打乱", "自动复原", "确认复原", "下一个", "设置", "方块", "导出状态", "上一个", "成绩", "清空分组", "重命名", "新建", "删除"]
 ];
-let functionButtonList = [
-    ["Next", "Prev", "Confirm"],
-    ["下一个", "上一个", "确认"]
-];
 let settingsTitleList = [
     ["Puzzle", "Appearance", "Statistics", "Color scheme", "Controls", "Timer", "General", "Session"],
     ["方块", "外观", "统计", "配色", "控制", "计时器", "通用", "分组"]

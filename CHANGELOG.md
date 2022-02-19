@@ -3,14 +3,6 @@ Changelog 变更记录
 All changes to this project will be listed here.
 对这个项目的所有变更都会在这里记录.
 
-4.1.7 - 2022-02-18
-----------
-Changed 变更
-- fixed keyboard controllable while multiblind inspection
-- added functions of function button
-- 修复多盲观察时键盘可控制
-- 功能键添加功能
-
 4.1.6 - 2022-02-17
 ----------
 Added 添加
