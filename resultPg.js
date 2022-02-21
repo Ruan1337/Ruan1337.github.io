@@ -4,9 +4,9 @@ let averageNumber = [5, 12], averageType = [1, 1], averageTitleString = ["Mo", "
 let timeAo = movesAo = tpsAo = 0, maxIndex = [0, 0, 0], minIndex = [0, 0, 0];
 let sessionStatSum = [0, 0, 0];
 let dnfs = 0, landscape = 1;
-if (window.innerWidth < window.innerHeight) {
+if (window.innerWidth < window.innerHeight)
     landscape = 0;
-}
+let addScramble = true;
 
 function sessionChange(x) {
     resultSession = x;
@@ -20,6 +20,28 @@ function sessionChange(x) {
         sessionSolves = 0;
         finishedSolves = 0;
         updateSessionStats();
+    }
+    getExistSummary();
+}
+
+function getExistSummary() {
+    let aoString = ["", ""];
+    if (sessionSolves == 0) {
+        updateSummary("-", "-");
+    } else {
+        if (isNaN(Number(document.querySelector("#resultTable").rows[sessionSolves].cells[4].innerHTML))) {
+            aoString[0] = "-";
+        } else {
+            for (let i = 4; i < 7; i ++)
+                aoString[0] += (document.querySelector("#resultTable").rows[sessionSolves].cells[i].innerHTML + " ");
+        }
+        if (isNaN(Number(document.querySelector("#resultTable").rows[sessionSolves].cells[7].innerHTML))) {
+            aoString[1] = "-";
+        } else {
+            for (let i = 7; i < 10; i ++)
+                aoString[1] += (document.querySelector("#resultTable").rows[sessionSolves].cells[i].innerHTML + " ");
+        }
+        updateSummary(aoString[0], aoString[1]);
     }
 }
 
@@ -40,6 +62,7 @@ function appendSession() {
     if (localStorage.getItem("tableHtml")) {
         document.querySelector('#resultSession').innerHTML = localStorage.getItem("tableHtml");
     }
+    getExistSummary();
 }
 
 function newSession() {
@@ -60,7 +83,7 @@ function newSession() {
         localStorage.setItem("resultSolves", JSON.stringify(resultSolves));
         localStorage.setItem("resultArray", JSON.stringify(resultArray));
         localStorage.setItem("sessionName", JSON.stringify(sessionName));
-        // kill this; use length instead
+        getExistSummary();
         localStoreTable();
     } else {
         return false;
@@ -81,6 +104,7 @@ function deleteSession() {
             localStorage.setItem("resultArray", JSON.stringify(resultArray));
             localStoreTable();
             reloadResult();
+            getExistSummary();
         }
     }
 }
@@ -121,19 +145,18 @@ function getDetails() {
         } else if (tempColIndex < 4) {
             if (resultArray[resultSession][tempRowIndex][0] < 0) {
                 if (resultArray[resultSession][tempRowIndex][1] >= 0) {
-                    alertMessage = tempRowIndex + ". DNF (" + averageBoxList[language][2] + " " + convertAccuracy(resultArray[resultSession][tempRowIndex][0]) + "[" + resultArray[resultSession][tempRowIndex][4] + "]" + infoBarList[language][3] + Math.abs(resultArray[resultSession][tempRowIndex][1]) + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / (Math.abs(resultArray[resultSession][tempRowIndex][0]) - resultArray[resultSession][tempRowIndex][4])) + ")"
-                    + "\n" + buttonLanguageList[language][1] + ": " + resultArray[resultSession][tempRowIndex][2] + "\n" + resultArray[resultSession][tempRowIndex][3];
+                    alertMessage = tempRowIndex + ". DNF (" + averageBoxList[language][2] + " " + convertAccuracy(resultArray[resultSession][tempRowIndex][0]) + "[" + resultArray[resultSession][tempRowIndex][4] + "]" + infoBarList[language][3] + Math.abs(resultArray[resultSession][tempRowIndex][1]) + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / (Math.abs(resultArray[resultSession][tempRowIndex][0]) - resultArray[resultSession][tempRowIndex][4])) + ")";
                 } else {
-                    alertMessage = tempRowIndex + ". DNF" + resultArray[resultSession][tempRowIndex][5] + " (" + averageBoxList[language][2] + " " + convertAccuracy(resultArray[resultSession][tempRowIndex][0])  + "[" + resultArray[resultSession][tempRowIndex][4] + "]" + infoBarList[language][3] + Math.abs(resultArray[resultSession][tempRowIndex][1]) + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / (Math.abs(resultArray[resultSession][tempRowIndex][0]) - resultArray[resultSession][tempRowIndex][4])) + ")"
-                    + "\n" + buttonLanguageList[language][1] + ": " + resultArray[resultSession][tempRowIndex][2] + "\n" + resultArray[resultSession][tempRowIndex][3];
+                    alertMessage = tempRowIndex + ". DNF" + resultArray[resultSession][tempRowIndex][5] + " (" + averageBoxList[language][2] + " " + convertAccuracy(resultArray[resultSession][tempRowIndex][0])  + "[" + resultArray[resultSession][tempRowIndex][4] + "]" + infoBarList[language][3] + Math.abs(resultArray[resultSession][tempRowIndex][1]) + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / (Math.abs(resultArray[resultSession][tempRowIndex][0]) - resultArray[resultSession][tempRowIndex][4])) + ")";
                 }
             } else if (resultArray[resultSession][tempRowIndex][4] > 0) {
-                alertMessage = tempRowIndex + ". " + averageBoxList[language][2] + " " + convertAccuracy(resultArray[resultSession][tempRowIndex][0]) + "[" + resultArray[resultSession][tempRowIndex][4] + "]" + infoBarList[language][3] + resultArray[resultSession][tempRowIndex][1] + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / (resultArray[resultSession][tempRowIndex][0] - resultArray[resultSession][tempRowIndex][4]))
-                + "\n" + buttonLanguageList[language][1] + ": " + resultArray[resultSession][tempRowIndex][2] + "\n" + resultArray[resultSession][tempRowIndex][3];
+                alertMessage = tempRowIndex + ". " + averageBoxList[language][2] + " " + convertAccuracy(resultArray[resultSession][tempRowIndex][0]) + "[" + resultArray[resultSession][tempRowIndex][4] + "]" + infoBarList[language][3] + resultArray[resultSession][tempRowIndex][1] + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / (resultArray[resultSession][tempRowIndex][0] - resultArray[resultSession][tempRowIndex][4]));
             } else {
-                alertMessage = tempRowIndex + ". " + infoBarList[language][2] + convertAccuracy(resultArray[resultSession][tempRowIndex][0]) + infoBarList[language][3] + resultArray[resultSession][tempRowIndex][1] + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / resultArray[resultSession][tempRowIndex][0]) 
-                + "\n" + buttonLanguageList[language][1] + ": " + resultArray[resultSession][tempRowIndex][2] + "\n" + resultArray[resultSession][tempRowIndex][3];
+                alertMessage = tempRowIndex + ". " + infoBarList[language][2] + convertAccuracy(resultArray[resultSession][tempRowIndex][0]) + infoBarList[language][3] + resultArray[resultSession][tempRowIndex][1] + infoBarList[language][4] + convertAccuracy(resultArray[resultSession][tempRowIndex][1] / resultArray[resultSession][tempRowIndex][0]);
             }
+            if (addScramble)
+                alertMessage += ("\n" + buttonLanguageList[language][1] + ": " + resultArray[resultSession][tempRowIndex][2]);
+            alertMessage += ("\n" + resultArray[resultSession][tempRowIndex][3]);
             alert(alertMessage);
         } else {
             let tempAverageType;
@@ -210,6 +233,14 @@ function getDetails() {
                     }
                 }
                 alertMessage += (timeListString + "\n" + movesListString + "\n" + tpsListString);
+                if (addScramble) {
+                    let scrambleListString = "";
+                    scrambleListString = (buttonLanguageList[language][1] + ": ");
+                    for (let i = tempRowIndex - averageNumber[tempAverageType] + 1; i <= tempRowIndex; i ++) {
+                        scrambleListString += ("[" + (i - tempRowIndex + averageNumber[tempAverageType]) + "]. " + resultArray[resultSession][i][2] + "\n");
+                    }
+                    alertMessage += ("\n" + scrambleListString);
+                }
                 alert(alertMessage);
             }
         }
@@ -225,11 +256,13 @@ function averageLengthChange(order) {
     }
     averageNumber[order] = Number(inputSize);
     setAverageChange();
+    getExistSummary();
 }
 
 function averageTypeChange(order, aomo) {
     averageType[order] = aomo;
     setAverageChange();
+    getExistSummary();
 }
 
 function setAverageChange() {
@@ -254,6 +287,7 @@ function clearSession() {
         document.querySelector('#sessionStats').innerHTML = infoBarList[language][7] + finishedSolves + "/" + sessionSolves + "): " + infoBarList[language][2] + 0 + infoBarList[language][3] + 0 + infoBarList[language][4] + 0;
         localStorage.setItem("resultSolves", JSON.stringify(resultSolves));
         localStorage.setItem("resultArray", JSON.stringify(resultArray));
+        getExistSummary();
     }
 }
 
@@ -375,6 +409,7 @@ function reloadResult() {
         finishedSolves = 0;
     }
     updateSessionStats();
+    getExistSummary();
 }
 
 function updateSessionStats() {
@@ -402,8 +437,18 @@ function getSessionDetails() {
             }
         }
         alertMessage += (timeListString + "\n" + movesListString + "\n" + tpsListString);
+        if (addScramble) {
+            let scrambleListString = buttonLanguageList[language][1] + ": ";
+            for (let i = 1; i <= sessionSolves; i++)
+                scrambleListString += ("[" + i + "]. " + resultArray[resultSession][i][2] + "\n");
+            alertMessage += ("\n" + scrambleListString);
+        }
         alert(alertMessage);
     }
+}
+
+function updateSummary(ao5, ao12) {
+    document.querySelector("#summary").innerHTML = (finishedSolves + "/" + sessionSolves + "<br>" + averageTitleString[averageType[0]] + averageNumber[0] + ": " + ao5 + "<br>" + averageTitleString[averageType[1]] + averageNumber[1] + ": " + ao12);
 }
 
 function convertAccuracy(x) {
@@ -448,9 +493,11 @@ function addResult() {
     } else {
         newResult.innerHTML = "<td>" + sessionSolves + "</td> <td>DNF</td> <td>DNF</td> <td>DNF</td>";
     }
+    let aoString = ["", ""];
     for (let l = 0; l < 2; l++) {
         if (sessionSolves < averageNumber[l]) {
             newResult.innerHTML += "<td> - </td> <td> - </td> <td> - </td>";
+            aoString[l] = "-";
         } else {
             timeAo = movesAo = tpsAo = 0;
             dnfs = 0;
@@ -517,12 +564,14 @@ function addResult() {
                 tpsAo = convertAccuracy(tpsAo / averageNumber[l]);
             }
             newResult.innerHTML += ("<td>" + timeAo + "</td> <td>" + movesAo + "</td> <td>" + tpsAo + "</td>");
+            aoString[l] = timeAo + " " + movesAo + " " + tpsAo;
         }
     }
     document.querySelector("#resultTable").appendChild(newResult);
     localStorage.setItem("resultSolves", JSON.stringify(resultSolves));
     localStorage.setItem("resultArray", JSON.stringify(resultArray));
     updateSessionStats();
+    updateSummary(aoString[0], aoString[1]);
 }
 
 //setResultCellWidth();

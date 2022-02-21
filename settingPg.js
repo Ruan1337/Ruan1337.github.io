@@ -28,6 +28,8 @@ function readLocalStorage() {
     if (localStorage.getItem("useHours")) useHours = (localStorage.getItem("useHours") == "true");
     if (localStorage.getItem("updateFreq")) updateFreq = Number(localStorage.getItem("updateFreq"));
     if (localStorage.getItem("language")) language = Number(localStorage.getItem("language"));
+    if (localStorage.getItem("addScramble")) addScramble = (localStorage.getItem("addScramble") == "true");
+    if (localStorage.getItem("disableSummary")) disableSummary = (localStorage.getItem("disableSummary") == "true");
 
     if (localStorage.getItem("sessionName")) sessionName = JSON.parse(localStorage.getItem("sessionName"));
     if (localStorage.getItem("maxSessionIndex")) maxSessionIndex = Number(localStorage.getItem("maxSessionIndex"));
@@ -89,6 +91,8 @@ function startUpSetting() {
     document.querySelector("#adjAverageNumber2").value = averageNumber[1];
     setDefaultSelected("adjAverageType1", averageType[0]);
     setDefaultSelected("adjAverageType2", averageType[1]);
+    document.querySelector("#addScramble").checked = addScramble;
+    document.querySelector("#disableSummary").checked = disableSummary;
     setLandscape();
 }
 
@@ -354,6 +358,16 @@ function setMinutes(x) {
     useHours = (x == 2);
     localStorage.setItem("useMinutes", useMinutes);
     localStorage.setItem("useHours", useHours);
+}
+
+function addScrambleControl() {
+    addScramble = !(addScramble);
+    localStorage.setItem("addScramble", addScramble);
+}
+
+function disableSummaryControl() {
+    disableSummary = !(disableSummary);
+    localStorage.setItem("disableSummary", disableSummary);
 }
 
 function setDefaultSelected(selectId, checkValue) {

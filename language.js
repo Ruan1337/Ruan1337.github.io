@@ -13,13 +13,15 @@ let settingsLanguageList = [
     "Color scheme", "Rainbow lightness",
     "Live pieces: done", "current", "next", "other", "Invert keyboard controls", "Hover on", "Language",
     "Time/TPS accuracy", "Time format", "Timer update", "Rolling average length 1 (3 ~ 1000)",
-    "Rolling average length 1 (3 ~ 1000)", "Rolling average type 1", "Rolling average type 2", "About", "Hide function button"],
+    "Rolling average length 1 (3 ~ 1000)", "Rolling average type 1", "Rolling average type 2", "About", "Hide function button", 
+    "Add scramble in details", "Hide summary"],
     ["横向阶数 (2 ~ 20)", "纵向阶数 (2 ~ 20)", "模式", "连拧个数 (> 1)", "多盲个数 (> 1)", "文字颜色",
     "文字大小比例 (0 ~ 1)", "拼图大小 (> 0)", "间隙 (>= 0)", "圆角大小比例 (0 ~ 0.5)", "块的边界", "进制数 (2 ~ 36)",
     "配色方案", "彩虹色亮度",
     "动态配色: 已完成", "当前", "下一组", "其它块", "反转键盘控制方向", "滑动", "语言",
     "时间/TPS 准确度", "时间格式", "计时器刷新", "滚动平均长度1 (3 ~ 1000)",
-    "滚动平均长度2 (3 ~ 1000)", "滚动平均类型1", "滚动平均类型2", "关于", "隐藏功能键"]
+    "滚动平均长度2 (3 ~ 1000)", "滚动平均类型1", "滚动平均类型2", "关于", "隐藏功能键", 
+    "在详情中添加打乱", "隐藏小结"]
 ];
 let colorSchemeList = [
     ["Fringes", "Rows, Columns", "Rows", "Columns", "Mono", "Last 2 Rows", "Last 2 Columns",
@@ -182,6 +184,8 @@ function setLanguage(systemDefault, languageValue) {
     document.querySelector('#averageTypeLabel2').innerHTML = settingsLanguageList[language][27];
     document.querySelector('#about').innerHTML = settingsLanguageList[language][28];
     document.querySelector('#disableFunctionButtonLabel').innerHTML = settingsLanguageList[language][29];
+    document.querySelector('#addScrambleLabel').innerHTML = settingsLanguageList[language][30];
+    document.querySelector('#disableSummaryLabel').innerHTML = settingsLanguageList[language][31];
     setDefaultSelected("language", language);
 
     drawSpacebarCanvas();

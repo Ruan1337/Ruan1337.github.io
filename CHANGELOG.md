@@ -3,6 +3,12 @@ Changelog 变更记录
 All changes to this project will be listed here.
 对这个项目的所有变更都会在这里记录.
 
+4.1.7 - 2022-02-21
+----------
+Added 添加
+- Summary on main page
+- 在主页面的小结
+
 4.1.6 - 2022-02-19
 ----------
 Added 添加

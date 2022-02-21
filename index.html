@@ -192,6 +192,18 @@
                     <span id="titleLabel3"> -----Statistics----- </span>
                 </td> </tr>
                 <tr> <td class="setting">
+                    <span>
+                        <input type="checkbox" id="addScramble" name="addScramble" onclick="addScrambleControl();">
+                    </span>
+                    <span id="addScrambleLabel"> Add scramble in details </span>
+                </td> </tr>
+                <tr> <td class="setting">
+                    <span>
+                        <input type="checkbox" id="disableSummary" name="disableSummary" onclick="disableSummaryControl();">
+                    </span>
+                    <span id="disableSummaryLabel"> Hide summary </span>
+                </td> </tr>
+                <tr> <td class="setting">
                     <span id="averageNumberLabel1"> Rolling average length 1 (3 ~ 1000) </span>
                     <input class="adjText" type="text" maxlength="4" id="adjAverageNumber1" onchange="averageLengthChange(0);">
                 </td> </tr>
@@ -321,6 +333,9 @@
         </div>
         <div>
             <canvas style="position: fixed; bottom: 0; text-align: center;" id="spacebarCanvas" width="620" height="124" onclick="functionButtonPressed();"> Your browser does not support canvas! </canvas>
+        </div>
+        <div>
+            <p style="position: fixed; text-align: left;" id="summary"> 0/0 </p>
         </div>
         <script type="text/javascript" src="language.js"></script>
         <script type="text/javascript" src="mainPg.js"></script>

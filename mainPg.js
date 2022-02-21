@@ -24,8 +24,8 @@ let startTime = memoFinishTime = currentTime = endTime = 0, timeString = "";
 let useMinutes = 1, useHours = 0, timerAccuracy = 1000, updateFreq = 60, intervalID;
 let puzzleTextColor = "#FFFFFF", puzzleTextRatio = 0.66, puzzleSize = 620, puzzleMargin = 2, puzzleRadiusFactor = 0, puzzleBorder = false, drawPuzzleOffset = 0;
 let onMainPage = true;
-let puzzleCanvas = document.querySelector("#puzzleCanvas"), spacebarCanvas = document.querySelector("#spacebarCanvas");
-let ctx = puzzleCanvas.getContext("2d"), ctxSpace = spacebarCanvas.getContext("2d"), disableFunctionButton = false;
+let puzzleCanvas = document.querySelector("#puzzleCanvas"), spacebarCanvas = document.querySelector("#spacebarCanvas"), summary = document.querySelector('#summary');
+let ctx = puzzleCanvas.getContext("2d"), ctxSpace = spacebarCanvas.getContext("2d"), disableFunctionButton = false, disableSummary = false;
 let randPieceZ;
 let scrambleString = "", relayProgress;
 ctx.lineWidth = 1, ctxSpace.lineWidth = 3;
@@ -92,11 +92,15 @@ function drawSpacebarCanvas() {
         spacebarCanvas.style.top = (0.1 * window.innerHeight) + "px";
         spacebarCanvas.width = 0.1 * window.innerWidth;
         spacebarCanvas.height = 0.8 * window.innerHeight;
+        summary.style.left = (0.12 * window.innerWidth) + "px";
+        summary.style.bottom = (0.05 * window.innerHeight) + "px";
     } else {
         spacebarCanvas.style = "position: fixed; bottom: 0;";
         spacebarCanvas.style.left = (0.1 * window.innerWidth) + "px";
         spacebarCanvas.width = 0.8 * window.innerWidth;
         spacebarCanvas.height = 0.1 * window.innerHeight;
+        summary.style.left = (0.05 * window.innerWidth) + "px";
+        summary.style.bottom = (0.12 * window.innerHeight) + "px";
     }
     ctxSpace.strokeRect(0, 0, spacebarCanvas.width, spacebarCanvas.height);
     if (language == 0) {
@@ -119,6 +123,7 @@ function drawSpacebarCanvas() {
         ctxSpace.fillText(buttonLanguageList[language][3], spacebarCanvas.width / 2, spacebarCanvas.height / 2);
     }
     if (!(onMainPage) || disableFunctionButton) spacebarCanvas.style.visibility = 'hidden';
+    if (!(onMainPage) || disableSummary) summary.style.visibility = 'hidden';
 }
 
 function functionButtonPressed() {
@@ -1613,9 +1618,12 @@ function setPage(x){
         bbtn.style.visibility = 'hidden';
         if (!(disableFunctionButton))
             spacebarCanvas.style.visibility = 'visible';
+        if (!(disableSummary))
+            summary.style.visibility = 'visible';
     }
     else {
         spacebarCanvas.style.visibility = 'hidden';
+        summary.style.visibility = 'hidden';
         if (x == 1)
             rbtn.style.visibility = 'hidden';
         else
